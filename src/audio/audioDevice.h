@@ -3,9 +3,16 @@
 #include <list>
 
 #define DEBUG_AUDIO_DEVICE
+#define AUDIO_DEVICE_MAX_PARAMS 6
+#define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
 //return string, if str pointer is not set 
 const char error_str[] PROGMEM = "error";
+
+//labels nearly all params are using
+const char ad_label_drywet_short[] PROGMEM = "wet";
+const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
+
 
 // return label type
 enum LABEL_TYPE
@@ -22,6 +29,29 @@ enum PARAM_UNIT
   UNIT_TIME,
   UNIT_BOOLEN,
   UNIT_DEZIBEL,
+};
+
+
+
+class audioDeviceIdGenerator
+{
+  public:
+    audioDeviceIdGenerator(){};
+    ~audioDeviceIdGenerator(){};
+
+    uint32_t generateID(){
+      uint32_t id = m_id;
+      if(m_id++ >= AUDIO_DEVICE_MAX_IDS){
+        //need assert here
+#ifdef DEBUG_AUDIO_DEVICE
+        Serial.print("ERROR: deviceID reached max\n");
+#endif  
+      }
+      return id;
+    }
+
+  private:
+    m_id{1};
 };
 
 
@@ -47,6 +77,8 @@ class audioDeviceParam
     };
 
     ~audioDeviceParam(){};
+
+    uint32_t getId(){return m_id;}
 
     const char * getLabel(enum LABEL_TYPE type)
     {
@@ -117,12 +149,21 @@ class audioDevice
       return error_str;  
     }
 
+    void updateParam(uint32_t id, float val)
+    {
+      for(int i=0;i<AUDIO_DEVICE_MAX_PARAMS;i++){
+        if(id == m_params[i]->getId()){
+          m_params[i]->setValue(val);
+        }
+      }
+    }
+
 
   protected:
     const char *m_label_long{NULL};
     const char *m_label_short{NULL};    
 
-    std::list<audioDeviceParam*> m_params;
+    audioDeviceParam *m_params[AUDIO_DEVICE_MAX_PARAMS];
     
 };
 

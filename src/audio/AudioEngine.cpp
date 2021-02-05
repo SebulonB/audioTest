@@ -16,6 +16,7 @@
 
 #include "audioEngine.h"
 #include "audioDevice.h"
+#include "audioEffekt.h"
 
 
 const char short_str[] PROGMEM = "short label BUHJA";
@@ -42,16 +43,17 @@ int16_t AudioEffekt::setInputStream(AudioStream &pin, uint8_t stream_ch, uint8_t
 
   mix_in_cords.push_back(new AudioConnection( pin, stream_ch, *mixer_in[audio_ch], in_cord_cnt++) );
 
-  audioDevice flup = audioDevice();
-  audioDeviceParam param = audioDeviceParam( 1, 0., 10., 5., 
-                                             UNIT_PERCENT, short_str, NULL, update);
-  param.setValue(0.8);
+  audioEffektDelay delay = audioEffektDelay(aef_delay1_label_short, aef_delay1_label_long);
+  // audioDevice flup = audioDevice();
+  // audioDeviceParam param = audioDeviceParam( 1, 0., 10., 5., 
+  //                                            UNIT_PERCENT, short_str, NULL, update);
+  // param.setValue(0.8);
 
 
 #ifdef ADUIO_ENGINE_DEBUG 
   sprintf(str_, "setInputCord: in_ch(%d) audio_ch(%d) cord_cnt(%d) \n", stream_ch, audio_ch, in_cord_cnt);
   Serial.print(str_);
-  sprintf(str_, "raumklang: %s\n", param.getLabel(LABEL_SHORT) );
+  sprintf(str_, "raumklang: %s\n", delay.getLabel(LABEL_SHORT) );
   Serial.print(str_);  
 #endif
 
