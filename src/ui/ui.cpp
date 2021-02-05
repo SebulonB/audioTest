@@ -13,7 +13,8 @@
 #include "ui.h"
 
 
-#define DEBUG_USAGE
+//#define DEBUG_USAGE
+//#define DEBUG_KNOB
 
 
 //
@@ -26,7 +27,7 @@
 // | Init GUI |
 #define BAR_CNT    6
 #define KNOB_CNT   6
-#define BUTTON_CNT 11
+#define BUTTON_CNT 12
 
 uint8_t knob_pins[2*KNOB_CNT] = {
   37, 38, // row 1
@@ -92,8 +93,8 @@ float dial_initvals[MAX_DIAL_PAGES] = {
 uint8_t button_list[BUTTON_CNT] = {
   41, 40, 39,    //row1
   24, 25, 26,    //row2
-  0, 1,          //display buttons left
-  2, 3, 4        //display buttons right
+  0, 1, 2,       //display buttons left
+  3, 4, 5        //display buttons right
 };
 
 
@@ -291,6 +292,12 @@ void UserInterface::change_page(uint8_t p)
 {
   if(    p_tft          == NULL
       || p_volume_bars  == NULL ) {return;}
+
+#ifdef DEBUG_KNOB
+  Serial.print("knob: "); 
+  Serial.print(p);
+  Serial.print("\n");  
+#endif   
 
   //submenu
   if(p<6) //knob dial button
