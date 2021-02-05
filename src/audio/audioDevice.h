@@ -52,12 +52,12 @@ class audioDeviceParam
     {
       if      (type == LABEL_SHORT){
         if(m_label_short != NULL){
-          return static_cast<const char *>(m_label_short);
+          return m_label_short;
         }
       }
       else if (type == LABEL_LONG){
         if(m_label_long != NULL){
-          return static_cast<const char *>(m_label_long);
+          return m_label_long;
         }
       }     
       return error_str;  
