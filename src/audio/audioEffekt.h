@@ -17,11 +17,6 @@ const char aef_delay2_label_long[]  PROGMEM = "delay:2";
 const char aef_delay3_label_short[] PROGMEM = "dlay:3";
 const char aef_delay3_label_long[]  PROGMEM = "delay:3";
 
-// //param labels
-const char aef_label_delay_param_left[]  PROGMEM = "left";
-const char aef_label_delay_param_right[] PROGMEM = "right";
-const char aef_label_delay_param_room[]  PROGMEM = "room";
-
 class audioEffektDelay : public audioDevice
 {
   public:
@@ -30,6 +25,9 @@ class audioEffektDelay : public audioDevice
 
   protected:
     void updateLeft(float val);
+
+  private:
+    int ku{9};
 
 };
 

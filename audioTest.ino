@@ -16,6 +16,7 @@
 
 #include "src/ui/widgets.h"
 #include "src/ui/ui.h"
+#include "src/audio/audioEffekt.h"
 #include "audioPatchControl.h"
 
 #define SerialDebugging true
@@ -37,6 +38,19 @@ void setup(void) {
 
   init_ui(&ui);
   threads.addThread(ui_thread); 
+
+  delay(1000);
+  audioDeviceIdGenerator idgen = audioDeviceIdGenerator();
+  audioEffektDelay delay1 = audioEffektDelay(&idgen, aef_delay1_label_short, aef_delay1_label_long);
+  audioEffektDelay delay2 = audioEffektDelay(&idgen, aef_delay2_label_short, aef_delay2_label_long);  
+  audioEffektDelay delay3 = audioEffektDelay(&idgen, aef_delay3_label_short, aef_delay3_label_long);  
+
+  for(int i=0; i<20; i++){
+    delay1.updateParam(i, i/20.);
+    delay2.updateParam(i, i/20.);
+    delay3.updateParam(i, i/20.);
+  }
+
 }
 
 
