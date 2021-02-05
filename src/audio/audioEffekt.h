@@ -24,7 +24,7 @@ class audioEffektDelay : public audioDevice
     ~audioEffektDelay(){};
 
   protected:
-    void updateLeft(float val);
+    void updateLeft(uint32_t id, float val);
 
   private:
     int ku{9};

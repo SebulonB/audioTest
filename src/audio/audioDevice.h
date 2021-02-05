@@ -61,7 +61,7 @@ class audioDeviceParam
 {
   public:
     audioDeviceParam(  uint32_t id, float min, float max, float init, enum PARAM_UNIT unit,
-                       const char * l_short, const char * l_long, std::function <void (float)> funcp )
+                       const char * l_short, const char * l_long, std::function <void (uint32_t, float)> funcp )
     { 
       m_id      = id;
       m_val_max = max;
@@ -102,7 +102,7 @@ class audioDeviceParam
       if(val >= m_val_min && val <= m_val_max){
         m_value = val;
         if(update_callback != NULL){    
-          update_callback(val);
+          update_callback(m_id, val);
         }
       }
     }
@@ -119,7 +119,7 @@ class audioDeviceParam
     enum PARAM_UNIT m_unit{UNIT_PERCENT};
     
     //update callback audioEffekt
-    std::function <void (float)> update_callback {NULL};
+    std::function <void (uint32_t, float)> update_callback {NULL};
 };
 
 
@@ -152,9 +152,12 @@ class audioDevice
     {
       for(auto param : m_params){
         if(id == param->getId()){
+          m_used_param = param;
           param->setValue(val);
         }     
       }
+      //done
+      m_used_param = NULL;
     }
 
   protected:
@@ -162,6 +165,7 @@ class audioDevice
     const char *m_label_short{NULL};    
 
     std::list<audioDeviceParam *> m_params;   
+    audioDeviceParam * m_used_param = NULL;
 };
 
 

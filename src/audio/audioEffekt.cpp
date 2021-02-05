@@ -20,11 +20,12 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                                     const char * l_short, const char * l_long)
 {
   //set labels
-  m_label_long  = l_short;
-  m_label_short = l_long; 
+  m_label_long  = l_long;
+  m_label_short = l_short; 
 
   //create params
-  auto cb = std::bind(&audioEffektDelay::updateLeft, this, std::placeholders::_1);
+  auto cb = std::bind( &audioEffektDelay::updateLeft, 
+                       this, std::placeholders::_1, std::placeholders::_2 );
   m_params.push_back( new audioDeviceParam( idgen->generateID(),
                                             0., 600., 20.,
                                             UNIT_TIME,
@@ -34,11 +35,12 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
 }
 
 
-void audioEffektDelay::updateLeft(float val)
+void audioEffektDelay::updateLeft(uint32_t id, float val)
 {
+
 #ifdef DEBUG_AUDIO_EFFEKT  
   char str[100];
-  sprintf(str, "update: %f %d\n", val, ku);
+  sprintf(str, "update: %f %s %s\n", val, m_label_long, m_used_param->getLabel(LABEL_SHORT));
   Serial.print(str);
 #endif  
 }
