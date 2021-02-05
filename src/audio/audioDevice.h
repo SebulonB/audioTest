@@ -14,6 +14,7 @@ const char ad_label_drywet_short[] PROGMEM = "wet";
 const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
 
 
+
 // return label type
 enum LABEL_TYPE
 {
@@ -51,7 +52,7 @@ class audioDeviceIdGenerator
     }
 
   private:
-    m_id{1};
+    uint32_t m_id{1};
 };
 
 

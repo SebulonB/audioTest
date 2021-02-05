@@ -25,8 +25,11 @@ const char aef_label_delay_param_room[]  PROGMEM = "room";
 class audioEffektDelay : public audioDevice
 {
   public:
-    audioEffektDelay(const char * l_short, const char * l_long);
+    audioEffektDelay(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
     ~audioEffektDelay(){};
+
+  protected:
+    void updateLeft(float val);
 
 };
 
