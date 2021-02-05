@@ -29,7 +29,7 @@ class audioDeviceParam
 {
   public:
     audioDeviceParam(  uint32_t id, float min, float max, float init, enum PARAM_UNIT unit,
-                       const char * l_short, const char * l_long)
+                       const char * l_short, const char * l_long, void (*funcp)(float))
     { 
       m_id      = id;
       m_val_max = max;
@@ -38,7 +38,12 @@ class audioDeviceParam
       m_unit    = unit;
 
       m_label_short = l_short;
-      m_label_long  = l_long;      
+      m_label_long  = l_long;  
+
+      if(funcp != NULL){
+        set_value_p = funcp;
+      }  
+
     };
 
     ~audioDeviceParam(){};
@@ -65,7 +70,9 @@ class audioDeviceParam
     void  setValue(float val){
       if(val >= m_val_min && val <= m_val_max){
         m_value = val;
-        (*this.*set_value_p) (val); //update also our effekt
+        if(set_value_p != NULL){
+          (*set_value_p)(val);
+        }
       }
     }
 
@@ -81,17 +88,7 @@ class audioDeviceParam
     enum PARAM_UNIT m_unit{UNIT_PERCENT};
 
     //update value
-    void set_value(float val){
-#ifdef DEBUG_AUDIO_DEVICE
-      Serial.print("SetVal: ");  
-      Serial.print(val);
-      Serial.print("\n");    
-#endif
-    }
-    void (audioDeviceParam::*set_value_p)(float){ 
-      &audioDeviceParam::set_value
-    };
-
+    void (*set_value_p)(float){NULL};
 };
 
 

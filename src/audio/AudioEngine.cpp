@@ -22,7 +22,12 @@ const char short_str[] PROGMEM = "short label BUHJA";
 const char long_str[]  PROGMEM = "long label";
 
 
-
+void update(float d)
+{
+  Serial.print("SetVal is huge: ");  
+  Serial.print(d);
+  Serial.print("\n");   
+}
 
 // AudioEffekt::AudioEffekt()
 // {
@@ -38,8 +43,7 @@ int16_t AudioEffekt::setInputStream(AudioStream &pin, uint8_t stream_ch, uint8_t
   mix_in_cords.push_back(new AudioConnection( pin, stream_ch, *mixer_in[audio_ch], in_cord_cnt++) );
 
   audioDevice flup = audioDevice();
-
-  audioDeviceParam param = audioDeviceParam(1, 0., 10., 5., UNIT_PERCENT, NULL, NULL);
+  audioDeviceParam param = audioDeviceParam(1, 0., 10., 5., UNIT_PERCENT, short_str, NULL, update);
   param.setValue(0.8);
 
 
