@@ -6,10 +6,14 @@
 
 
 //
+//
+#define AUDIO_EFFEKT_MAX_CHANNELS  2
+#define AUDIO_EFFEKT_MAX_IN_CHORDS 4
+
+
+//
 // Ping Pong Delay
 //
-
-//labels for 3 delay instances
 const char aef_delay1_label_short[] PROGMEM = "dlay:1";
 const char aef_delay1_label_long[]  PROGMEM = "delay:1";
 const char aef_delay2_label_short[] PROGMEM = "dlay:2";

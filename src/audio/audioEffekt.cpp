@@ -8,7 +8,7 @@
 #include "audioDevice.h"
 
 
-#define DEBUG_AUDIO_EFFEKT
+
 
 //param labels
 const char aef_label_delay_param_left[]  PROGMEM = "left";
@@ -23,14 +23,16 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
   m_label_long  = l_long;
   m_label_short = l_short; 
 
+  m_id = idgen->generateID(ID_TYPE_DEVICE_DELAY_EFFEKT);
+
   //create params
   auto cb = std::bind( &audioEffektDelay::updateLeft, 
                        this, std::placeholders::_1, std::placeholders::_2 );
-  m_params.push_back( new audioDeviceParam( idgen->generateID(),
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
                                             0., 600., 20.,
                                             UNIT_TIME,
                                             aef_label_delay_param_left, aef_label_delay_param_left,
-                                            cb) );
+                                            cb ) );
 
 }
 
@@ -38,10 +40,11 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
 void audioEffektDelay::updateLeft(uint32_t id, float val)
 {
 
-#ifdef DEBUG_AUDIO_EFFEKT  
-  char str[100];
-  sprintf(str, "update: %f %s %s\n", val, m_label_long, m_used_param->getLabel(LABEL_SHORT));
-  Serial.print(str);
+#ifdef DEBUG_AUDIO_DEVICE 
+  sprintf(str_, "update cb: device( 0x%08x | %s ) param( 0x%08x | %s ) value( %3.1f )\n", static_cast<unsigned int>(m_id), m_label_long, 
+                                                                                          static_cast<unsigned int>(id),   m_used_param->getLabel(LABEL_LONG),
+                                                                                          val);
+  Serial.print(str_);
 #endif  
 }
 

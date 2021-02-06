@@ -25,15 +25,15 @@ void AudioPatchControl::init(void)
 {
   if(p_ui == NULL){return;} 
   
-  p_delay->setInputStream(Mix_LeftIn,  0, 0);
-  p_delay->setInputStream(Mix_RightIn, 0, 1);
+  // p_delay->setInputStream(Mix_LeftIn,  0, 0);
+  // p_delay->setInputStream(Mix_RightIn, 0, 1);
 
-  _cords.push_back(new AudioConnection( *p_delay->getOutputStream(0), 0, 
-                                        MasterLeft,  0));
-  _cords.push_back(new AudioConnection( *p_delay->getOutputStream(1), 0, 
-                                        MasterRight, 0));  
+  // _cords.push_back(new AudioConnection( *p_delay->getOutputStream(0), 0, 
+  //                                       MasterLeft,  0));
+  // _cords.push_back(new AudioConnection( *p_delay->getOutputStream(1), 0, 
+  //                                       MasterRight, 0));  
 
-  p_delay->updateParam(0, 1.23);
+  // p_delay->updateParam(0, 1.23);
   // |init mixers|
   float val = 1.0;
   for(int i=0; i<4; i++){

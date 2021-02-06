@@ -4,7 +4,8 @@
 #include <functional>
 
 #define DEBUG_AUDIO_DEVICE
-#define AUDIO_DEVICE_MAX_PARAMS 6
+
+
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
 //return string, if str pointer is not set 
@@ -14,7 +15,14 @@ const char error_str[] PROGMEM = "error";
 const char ad_label_drywet_short[] PROGMEM = "wet";
 const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
 
-
+//
+enum ID_TYPE
+{
+  ID_TYPE_PARAM = 0,
+  ID_TYPE_DEVICE_INPUT,
+  ID_TYPE_DEVICE_OUTPUT,
+  ID_TYPE_DEVICE_DELAY_EFFEKT,
+};
 
 // return label type
 enum LABEL_TYPE
@@ -34,14 +42,19 @@ enum PARAM_UNIT
 };
 
 
-
+//
+// Id Generator for all audioDevies
+//
+// 16bit LSB (unique id)
+// 16bit MSB (ID type) see enum ID_TYPE
+//
 class audioDeviceIdGenerator
 {
   public:
     audioDeviceIdGenerator(){};
     ~audioDeviceIdGenerator(){};
 
-    uint32_t generateID(){
+    uint32_t generateID(enum ID_TYPE type){
       uint32_t id = m_id;
       if(m_id++ >= AUDIO_DEVICE_MAX_IDS){
         //need assert here
@@ -49,12 +62,20 @@ class audioDeviceIdGenerator
         Serial.print("ERROR: deviceID reached max\n");
 #endif  
       }
+      id &= 0x0000FFFF;
+      id |= (static_cast<uint16_t>(type) << 16);
       return id;
+    }
+
+    enum ID_TYPE getDeviceType(uint32_t id){
+      uint16_t t = (id >> 16);
+      return static_cast<enum ID_TYPE>(t);
     }
 
   private:
     uint32_t m_id{1};
 };
+
 
 
 class audioDeviceParam
@@ -115,7 +136,7 @@ class audioDeviceParam
 
     float m_val_max{1.};
     float m_val_min{0.};
-    float m_value{0};
+    float m_value{0.};
     enum PARAM_UNIT m_unit{UNIT_PERCENT};
     
     //update callback audioEffekt
@@ -162,10 +183,18 @@ class audioDevice
 
   protected:
     const char *m_label_long{NULL};
-    const char *m_label_short{NULL};    
+    const char *m_label_short{NULL};   
 
+    uint32_t m_id{0}; 
+
+    //Params
     std::list<audioDeviceParam *> m_params;   
     audioDeviceParam * m_used_param = NULL;
+
+    //debugging
+#ifdef DEBUG_AUDIO_DEVICE
+    char str_[100];
+#endif  
 };
 
 

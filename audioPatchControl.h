@@ -8,7 +8,7 @@ class AudioPatchControl
   public:
     AudioPatchControl(UserInterface *ui){
       p_ui = ui;
-      p_delay = new AudioEffektDelay();
+      // p_delay = new AudioEffektDelay();
     }
     
     void init(void);
@@ -27,7 +27,7 @@ class AudioPatchControl
 
     bool m_debug{false};   
 
-    AudioEffekt *p_delay;
+    //AudioEffekt *p_delay;
 
 };
 
