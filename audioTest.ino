@@ -22,7 +22,7 @@
 #define SerialDebugging true
 
 UserInterface     ui     = UserInterface();
-audioEngine       engine = audioEngine();
+
 AudioPatchControl apc    = AudioPatchControl(&ui);
 
 
@@ -40,6 +40,9 @@ void setup(void) {
 
   init_ui(&ui);
   threads.addThread(ui_thread); 
+
+  delay(1000);
+  audioEngine       engine = audioEngine();
 }
 
 
