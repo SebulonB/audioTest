@@ -5,7 +5,6 @@
 
 #define DEBUG_AUDIO_DEVICE
 
-
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
 //return string, if str pointer is not set 
@@ -14,6 +13,8 @@ const char error_str[] PROGMEM = "error";
 //labels nearly all params are using
 const char ad_label_drywet_short[] PROGMEM = "wet";
 const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
+const char ad_label_volume_short[] PROGMEM = "vol";
+const char ad_label_volume_long[]  PROGMEM = "volume";
 
 //
 enum ID_TYPE

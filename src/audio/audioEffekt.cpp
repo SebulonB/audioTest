@@ -25,6 +25,12 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
 
   m_id = idgen->generateID(ID_TYPE_DEVICE_DELAY_EFFEKT);
 
+
+#ifdef DEBUG_AUDIO_DEVICE 
+  sprintf(str_, "create delay effekt: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
+  Serial.print(str_);
+#endif    
+
   //create params
   auto cb = std::bind( &audioEffektDelay::updateLeft, 
                        this, std::placeholders::_1, std::placeholders::_2 );
@@ -33,7 +39,6 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                                             UNIT_TIME,
                                             aef_label_delay_param_left, aef_label_delay_param_left,
                                             cb ) );
-
 }
 
 

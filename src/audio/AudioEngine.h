@@ -11,10 +11,6 @@
 
 //
 //
-
-
-
-
 class audioEngine
 {
   public:
@@ -24,6 +20,8 @@ class audioEngine
   private:
     //use std::map?
     std::list<audioDevice *> m_devices;
+
+    audioDeviceIdGenerator *idgen;
 };
 
 
