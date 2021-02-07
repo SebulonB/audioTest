@@ -1,4 +1,5 @@
-#include <string.h>
+#include <string>
+#include <vector>
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
@@ -25,7 +26,7 @@ UserInterface     ui     = UserInterface();
 
 AudioPatchControl apc    = AudioPatchControl(&ui);
 
-
+char str_[100];
 
 //
 // Teensy Libs: Teensyduino/Contents/Java/hardware/teensy/avr
@@ -43,6 +44,15 @@ void setup(void) {
 
   delay(1000);
   audioEngine       engine = audioEngine();
+  std::vector<audioDevice *> delay_effekts;
+  engine.getDeviceList(ID_TYPE_DEVICE_OUTPUT, delay_effekts);
+
+  
+  for( auto device : delay_effekts){
+    sprintf(str_, "List of DelayEffkts: (%s)\n", device->getLabel(LABEL_LONG));
+    Serial.print(str_);
+  }
+
 }
 
 

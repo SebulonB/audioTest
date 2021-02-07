@@ -18,6 +18,9 @@ class audioEngine
     audioEngine();
     ~audioEngine(){};
 
+    void updateParam(uint32_t device_id, uint32_t param_id, float val);
+    void getDeviceList(enum ID_TYPE type, std::vector<audioDevice *> &v_device);
+
   private:
     //use std::map?
     std::vector<audioDevice *> m_devices;

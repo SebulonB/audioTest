@@ -152,6 +152,8 @@ class audioDevice
   public:
     audioDevice(){};
     ~audioDevice(){};
+    
+    uint32_t getId(){return m_id;}
 
     const char * getLabel(enum LABEL_TYPE type)
     {
