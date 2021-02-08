@@ -11,13 +11,43 @@
 
 class WidgetDial;
 
-class WidgetVolumeBars {
+
+class WidgetPage {
+
+  public:
+    WidgetPage(Adafruit_ST7789 *tft) : p_tft(tft){};
+   ~WidgetPage(){};
+
+    //virtual void drawPage(void);
+    //virtual void drawUpdate(bool force);
+
+    void updateEncoder(uint8_t ch, float val);
+    void updateButton(uint8_t ch, uint8_t state);
+
+    bool getActive(void){return m_active;}
+    void setActive(bool a){m_active = a;}
+
+  protected:
+    Adafruit_ST7789 *p_tft{ NULL };
+
+  private:
+    bool m_active{false};
+};
+
+
+
+class WidgetVolumeBars : public WidgetPage{
   
   public:
     WidgetVolumeBars(Adafruit_ST7789 *tft, uint8_t ch_cnt, int length, float init_val); 
+    ~WidgetVolumeBars(){}; 
 
+    // void    drawPage(void){
+    //    drawAllChannels();
+    // }
     void    drawAllChannels(void);
     void    drawUpdate(bool force);
+
 
     void    setFaderVal(uint8_t ch, float val, bool draw);
     float   getFaderVal(uint8_t ch);
@@ -32,12 +62,10 @@ class WidgetVolumeBars {
     bool    muteUpdated(uint8_t ch);
  
     uint8_t getNumber(){return m_channel_cnt;}
-    void    setActive(bool a){active=a;}
-    bool    getActive(void){return active;}
 
 
   private:  
-    Adafruit_ST7789 *p_tft{ NULL };
+    //Adafruit_ST7789 *p_tft{ NULL };
     //                                      (5bit red | 6bit gr | 5bit blue)
     const uint16_t m_color_bar              {(15<<11) | (20<<5) | (15<<0)}; 
     const uint16_t m_color_bar_value        {(00<<11) | (31<<5) | (00<<0)};      
@@ -47,8 +75,6 @@ class WidgetVolumeBars {
     const uint16_t m_color_mute             {(15<<11) | (25<<5) | (00<<0)};
     const uint16_t m_color_label            {(14<<11) | (20<<5) | (20<<0)};   
      
-    bool active{false};
-
     uint8_t m_channel_cnt{ 0 };
     int m_length{ 0 };
     int m_channel_gap{ 0 };  
@@ -80,7 +106,7 @@ class WidgetVolumeBars {
 };
 
 
-class WidgetDialGroup {
+class WidgetDialGroup : public WidgetPage{
    
   public:
     WidgetDialGroup(Adafruit_ST7789 *tft, uint8_t ch_cnt, char** labels, float init_val);
@@ -92,13 +118,9 @@ class WidgetDialGroup {
     bool    dialUpdated(uint8_t ch);
     void    drawUpdate(bool force);
     uint8_t getNumber(){return m_channel_cnt;}    
-    void    setActive(bool a){active=a;}  
-    bool    getActive(void){return active;}  
 
   private:
     Adafruit_ST7789 *p_tft{ NULL };
-
-    bool active{false};
     
     uint8_t m_channel_cnt{ 0 };
     float m_rdial{0.};
@@ -157,6 +179,18 @@ class WidgetDial {
     void draw_value();
     void draw_label();
 
+};
+
+class WidgetDeviceList {
+  
+  public:
+    WidgetDeviceList(Adafruit_ST7789 *tft);
+
+    //                                      (5bit red | 6bit gr | 5bit blue)
+    const uint16_t m_color_dial             {(15<<11) | (20<<5) | (15<<0)};    
+    const uint16_t m_color_hand             {(25<<11) | (40<<5) | (25<<0)};
+    const uint16_t m_color_value            {(14<<11) | (20<<5) | (20<<0)};    
+    const uint16_t m_color_label            {(14<<11) | (20<<5) | (20<<0)};        
 };
 
 

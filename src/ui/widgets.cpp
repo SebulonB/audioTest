@@ -12,14 +12,14 @@
                | Volume Bars : ch_cnt ==> number of bars |
 
 *****************************************************************************/
-WidgetVolumeBars::WidgetVolumeBars(Adafruit_ST7789 *tft, uint8_t ch_cnt, int length, float init_val) 
-                                   : m_channel_cnt(ch_cnt), m_length(length)
+WidgetVolumeBars::WidgetVolumeBars( Adafruit_ST7789 *tft, uint8_t ch_cnt, int length, float init_val) 
+                                    : WidgetPage(tft), m_channel_cnt(ch_cnt), m_length(length)
 {
+
+  if(tft == NULL){return;}
+
   if(m_channel_cnt == 0) {return;}
   
-  if(tft == NULL){return;}
-  p_tft = tft;
-
   //Init Fader
   if(init_val < 0.0 || init_val > 1.0) {return;}
   for(int i=0; i<m_channel_cnt;i++){
@@ -40,7 +40,7 @@ WidgetVolumeBars::WidgetVolumeBars(Adafruit_ST7789 *tft, uint8_t ch_cnt, int len
 
 void WidgetVolumeBars::drawAllChannels(void)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
 
   for(int i=0;i<m_channel_cnt; i++)
   {
@@ -51,7 +51,7 @@ void WidgetVolumeBars::drawAllChannels(void)
 
 void WidgetVolumeBars::drawUpdate(bool force)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
 
   for(int i=0; i<m_channel_cnt; i++)
   {
@@ -66,7 +66,7 @@ void WidgetVolumeBars::drawUpdate(bool force)
 
 void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
 
   if(p_tft == NULL){return;}    
   if(ch >= m_channel_cnt) {return;}
@@ -76,7 +76,7 @@ void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
   fader_updated_get[ch]  = true;
   fader_updated_draw[ch] = true;
 
-  if(draw && active){
+  if(draw && getActive()){
     draw_fader(ch, val, false);  
   }
 }
@@ -115,7 +115,7 @@ bool WidgetVolumeBars::faderUpdated(uint8_t ch)
 
 void WidgetVolumeBars::setBarVal(uint8_t ch, float val, bool draw)
 { 
-  if(!active){return;}
+  if(!getActive()){return;}
 
   if(ch >= m_channel_cnt) {return;}
   if(val < 0.0 || val > 1.0) {return;}
@@ -123,14 +123,14 @@ void WidgetVolumeBars::setBarVal(uint8_t ch, float val, bool draw)
   bar_saved_val[ch] = val;
   bar_updated[ch] = true;
 
-  if(draw && active){
+  if(draw && getActive()){
     draw_bar_value(ch, val, false);
   }
 }
 
 void WidgetVolumeBars::setMute(uint8_t ch, bool en, bool draw)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
   if(ch >= m_channel_cnt) {return;}
 
   mute_value[ch] = en;
@@ -144,7 +144,7 @@ void WidgetVolumeBars::setMute(uint8_t ch, bool en, bool draw)
 
 void WidgetVolumeBars::toggleMute(uint8_t ch, bool draw)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
   if(ch >= m_channel_cnt) {return;}
 
   mute_value[ch] = !mute_value[ch];
@@ -295,8 +295,8 @@ void WidgetVolumeBars::draw_mute(uint8_t ch, bool en, bool force)
                        | Dial Group Widget |
 
 *****************************************************************************/
-WidgetDialGroup::WidgetDialGroup(Adafruit_ST7789 *tft, uint8_t ch_cnt, char** labels, float init_val)
-                                 : m_channel_cnt(ch_cnt)
+WidgetDialGroup::WidgetDialGroup(  Adafruit_ST7789 *tft, uint8_t ch_cnt, char** labels, float init_val)
+                                 : WidgetPage(tft), m_channel_cnt(ch_cnt)
 {
   if(m_channel_cnt == 0) {return;}  
   if(tft == NULL){return;}
@@ -333,7 +333,7 @@ WidgetDialGroup::WidgetDialGroup(Adafruit_ST7789 *tft, uint8_t ch_cnt, char** la
 void WidgetDialGroup::drawAllChannels()
 {
   if(p_tft == NULL){return;}
-  if(!active){return;}
+  if(!getActive()){return;}
 
   for(int i=0; i<m_channel_cnt && i<MAX_DIAL_NUMBER; i++){
     dial[i]->drawDial(); 
@@ -359,7 +359,7 @@ void WidgetDialGroup::drawInfo(char *str)
 void WidgetDialGroup::drawUpdate(bool force)
 {
   if(p_tft == NULL){return;}
-  if(!active){return;}
+  if(!getActive()){return;}
 
   for(int i=0; i<m_channel_cnt && i<MAX_DIAL_NUMBER; i++){
     dial[i]->drawUpdate(force); 
@@ -368,7 +368,7 @@ void WidgetDialGroup::drawUpdate(bool force)
 
 void WidgetDialGroup::setDialVal(uint8_t ch, float val, bool draw)
 {
-  if(!active){return;}
+  if(!getActive()){return;}
 
   if(p_tft == NULL){return;}
   if(ch >= m_channel_cnt) {return;}

@@ -45,7 +45,7 @@ void setup(void) {
   delay(1000);
   audioEngine       engine = audioEngine();
   std::vector<audioDevice *> delay_effekts;
-  engine.getDeviceList(ID_TYPE_DEVICE_OUTPUT, delay_effekts);
+  engine.getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
 
   
   for( auto device : delay_effekts){
