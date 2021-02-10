@@ -10,14 +10,20 @@
 #define AUDIO_EFFEKT_MAX_CHANNELS  2
 #define AUDIO_EFFEKT_MAX_IN_CHORDS 4
 
+enum AUDIO_ADC_INPUT
+{
+  AUDIO_ADC_INPUT_I2S_HEX = 0, 
+};
+
+
 
 //
 // Ping Pong Delay
 //
-class audioI2SInput : public audioDevice
+class audioADCInput : public audioDevice
 {
   public:
-    audioI2SInput(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
+    audioI2SInput(audioDeviceIdGenerator *idgen, enum AUDIO_ADC_INPUT type);
     ~audioI2SInput();
 
   private:
