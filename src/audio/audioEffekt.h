@@ -14,6 +14,23 @@
 //
 // Ping Pong Delay
 //
+class audioI2SInput : public audioDevice
+{
+  public:
+    audioI2SInput(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
+    ~audioI2SInput();
+
+  private:
+    AudioOutputI2S *m_in{NULL};
+
+};
+
+
+
+
+//
+// Ping Pong Delay
+//
 const char aef_delay1_label_short[] PROGMEM = "dlay:1";
 const char aef_delay1_label_long[]  PROGMEM = "delay:1";
 const char aef_delay2_label_short[] PROGMEM = "dlay:2";
@@ -34,8 +51,6 @@ class audioEffektDelay : public audioDevice
     int ku{9};
 
 };
-
-
 
 
 

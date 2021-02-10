@@ -1,7 +1,12 @@
 #ifndef AUDIO_DEVICE_H_
 #define AUDIO_DEVICE_H_
 #include <list>
+#include <vector>
 #include <functional>
+
+#include <Audio.h>
+#include <Wire.h>
+
 
 #define DEBUG_AUDIO_DEVICE
 
@@ -184,6 +189,20 @@ class audioDevice
       m_used_param = NULL;
     }
 
+    void updateParam(uint32_t id, uint8_t index, float val){
+      if(index>=m_params.size())
+      {
+        //use id instead
+        updateParam(id, val);
+      }
+      else
+      {
+        m_used_param = m_params.at(index);
+        m_params.at(index)->setValue(val);
+        m_used_param = NULL;
+      }
+    }
+
   protected:
     const char *m_label_long{NULL};
     const char *m_label_short{NULL};   
@@ -191,8 +210,14 @@ class audioDevice
     uint32_t m_id{0}; 
 
     //Params
-    std::list<audioDeviceParam *> m_params;   
+    std::vector<audioDeviceParam *> m_params;   
     audioDeviceParam * m_used_param = NULL;
+
+    //Audio Input/Out
+    std::vector<AudioMixer4 *> m_mix_in;
+    std::vector<AudioMixer4 *> m_mix_out;
+    std::vecotr<AudioMixer4 *> m_cords;
+
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE
