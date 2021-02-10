@@ -6,9 +6,9 @@
 class AudioPatchControl
 {
   public:
-    AudioPatchControl(UserInterface *ui){
+    AudioPatchControl(UserInterface *ui, audioEngine *engine){
       p_ui = ui;
-      // p_delay = new AudioEffektDelay();
+      p_engine = engine;
     }
     
     void init(void);
@@ -22,6 +22,7 @@ class AudioPatchControl
 
   private:
     UserInterface *p_ui{NULL};
+    audioEngine *p_engine{NULL};
 
     std::list<AudioConnection*> _cords;
 

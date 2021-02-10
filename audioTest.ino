@@ -22,9 +22,9 @@
 
 #define SerialDebugging true
 
-UserInterface     ui     = UserInterface();
-
-AudioPatchControl apc    = AudioPatchControl(&ui);
+UserInterface     *ui=NULL;  
+audioEngine       *engine=NULL;
+AudioPatchControl *apc=NULL;   
 
 char str_[100];
 
@@ -37,17 +37,19 @@ void setup(void) {
 
   Serial.begin(9600);
 
-  apc.init();
+  delay(1000);
+  ui     = new UserInterface();
+  engine = new audioEngine();
+  apc    = new AudioPatchControl(ui, engine);
+  
 
-  init_ui(&ui);
+  init_ui(ui);
   threads.addThread(ui_thread); 
 
-  delay(1000);
-  audioEngine       engine = audioEngine();
+  //
+  //Print delay_effekts
   std::vector<audioDevice *> delay_effekts;
-  engine.getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
-
-  
+  engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
   for( auto device : delay_effekts){
     sprintf(str_, "List of DelayEffkts: (%s)\n", device->getLabel(LABEL_LONG));
     Serial.print(str_);
@@ -59,35 +61,35 @@ void setup(void) {
 void loop() {
   
   //update bar with peak value
-  if(ui.getFaderActive(0))
+  if(ui->getFaderActive(0))
   {
-     apc.updatePeak();
+     apc->updatePeak();
   }
 
   //check faders
   for(int i = 0; i<MAX_MIXER_WIDGET_CHANNELS; i++)
   {
-    if(ui.getFaderUpdated(i) && ui.getFaderActive(i))
+    if(ui->getFaderUpdated(i) && ui->getFaderActive(i))
     {
-      apc.updateInputMixer(i);
+      apc->updateInputMixer(i);
     }
   }
 
   //check pan
   for(int i=0; i<6;i++){
-    if(    ui.getDialUpdated(UserInterface::DIAL_PAGE_PAN,i)
-        && ui.getDialActive(UserInterface::DIAL_PAGE_PAN,i))
+    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_PAN,i)
+        && ui->getDialActive(UserInterface::DIAL_PAGE_PAN,i))
     {
-      apc.updateInputMixer(i);
+      apc->updateInputMixer(i);
     }
   }
 
   //check lowpass
   for(int i=0; i<6;i++){
-    if(    ui.getDialUpdated(UserInterface::DIAL_PAGE_HIGHPASS,i)
-        && ui.getDialActive(UserInterface::DIAL_PAGE_HIGHPASS,i))
+    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_HIGHPASS,i)
+        && ui->getDialActive(UserInterface::DIAL_PAGE_HIGHPASS,i))
     {
-      apc.setHighPass(i);
+      apc->setHighPass(i);
     }
   }  
 
@@ -96,29 +98,29 @@ void loop() {
   uint8_t e = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH6);
   for(int i=0; i<6;i++){
     for(int y=s; y<=e;y++){
-      if(    ui.getDialUpdated((enum UserInterface::DIAL_PAGE)y,i)
-          && ui.getDialActive((enum UserInterface::DIAL_PAGE)y,i))
+      if(    ui->getDialUpdated((enum UserInterface::DIAL_PAGE)y,i)
+          && ui->getDialActive((enum UserInterface::DIAL_PAGE)y,i))
       {
-        apc.setSendEffect((enum UserInterface::DIAL_PAGE)y,i);
+        apc->setSendEffect((enum UserInterface::DIAL_PAGE)y,i);
       }
     }
   }    
 
   //check Reverb Param
   for(int i=0; i<6;i++){
-    if(    ui.getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_REVERB,i)
-        && ui.getDialActive(UserInterface::DIAL_PAGE_EFFECT_REVERB, i))
+    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_REVERB,i)
+        && ui->getDialActive(UserInterface::DIAL_PAGE_EFFECT_REVERB, i))
     {
-      apc.setReverbParam(i);
+      apc->setReverbParam(i);
     }
   } 
 
   //check Delay Param
   for(int i=0; i<6;i++){
-    if(    ui.getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_DELAY,i)
-        && ui.getDialActive(UserInterface::DIAL_PAGE_EFFECT_DELAY, i))
+    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_DELAY,i)
+        && ui->getDialActive(UserInterface::DIAL_PAGE_EFFECT_DELAY, i))
     {
-      apc.setDelayParam(i);
+      apc->setDelayParam(i);
     }
   } 
     
