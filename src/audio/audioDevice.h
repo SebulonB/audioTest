@@ -12,8 +12,11 @@
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
+#define AUDIO_DEVICE_MAX_CHANNELS  2
+#define AUDIO_DEVICE_MAX_IN_CHORDS 4
+
 //return string, if str pointer is not set 
-const char error_str[] PROGMEM = "error";
+const char error_str[] PROGMEM = "unknown";
 
 //labels nearly all params are using
 const char ad_label_drywet_short[] PROGMEM = "wet";
@@ -203,26 +206,50 @@ class audioDevice
       }
     }
 
+    int setInputStream(AudioStream &pin, uint8_t stream_ch, uint8_t audio_ch)
+    {
+      if(audio_ch    >= AUDIO_DEVICE_MAX_CHANNELS)  {return -1;}
+      if(in_cord_cnt >= AUDIO_DEVICE_MAX_IN_CHORDS) {return -1;}
+
+      if( audio_ch < m_mix_in.size() )
+      {
+        m_cords.push_back(new AudioConnection( pin, stream_ch, *m_mix_in.at(audio_ch), in_cord_cnt++) );
+
+#ifdef ADUIO_ENGINE_DEBUG 
+        sprintf(str_, "setInputCord: device( %s ) in_ch(%d) audio_ch(%d) cord_cnt(%d) \n", getLabel(LABEL_SHORT), stream_ch, audio_ch, in_cord_cnt);
+        Serial.print(str_);
+#endif
+      }
+
+      return 0;
+    }
+
+    virtual AudioStream *getOutputStream(uint8_t audio_ch);   
+
   protected:
     const char *m_label_long{NULL};
     const char *m_label_short{NULL};   
 
     uint32_t m_id{0}; 
 
+
     //Params
     std::vector<audioDeviceParam *> m_params;   
     audioDeviceParam * m_used_param = NULL;
 
     //Audio Input/Out
-    std::vector<AudioMixer4 *> m_mix_in;
-    std::vector<AudioMixer4 *> m_mix_out;
-    std::vecotr<AudioMixer4 *> m_cords;
-
+    std::vector<AudioMixer4 *>    m_mix_in;
+    std::vector<AudioMixer4 *>    m_mix_out;
+    std::vector<AudioConnection*> m_cords;
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE
     char str_[100];
 #endif  
+
+  private:
+    uint8_t in_cord_cnt{0};
+
 };
 
 

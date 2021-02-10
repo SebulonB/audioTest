@@ -2,6 +2,8 @@
 #define AUDIO_EFFEKT_H_
 
 #include <list>
+#include <Audio.h>
+
 #include "audioDevice.h"
 
 
@@ -10,26 +12,54 @@
 #define AUDIO_EFFEKT_MAX_CHANNELS  2
 #define AUDIO_EFFEKT_MAX_IN_CHORDS 4
 
-enum AUDIO_ADC_INPUT
+enum AUDIO_ADC
 {
-  AUDIO_ADC_INPUT_I2S_HEX = 0, 
+  AUDIO_ADC_I2S_HEX = 0, 
+};
+
+enum AUDIO_DAC
+{
+  AUDIO_DAC_I2S = 0, 
 };
 
 
 
 //
-// Ping Pong Delay
+// All kinds of ADC input
 //
-class audioADCInput : public audioDevice
+class audioADC : public audioDevice
 {
   public:
-    audioI2SInput(audioDeviceIdGenerator *idgen, enum AUDIO_ADC_INPUT type);
-    ~audioI2SInput();
+    audioADC(audioDeviceIdGenerator *idgen, enum AUDIO_ADC type);
+    ~audioADC(){};
+
+    AudioStream *getOutputStream(uint8_t aduio_ch);  
 
   private:
-    AudioOutputI2S *m_in{NULL};
+    AudioInputI2SHex *m_input{NULL};
+
+    enum AUDIO_ADC m_type;
 
 };
+
+//
+// All kinds of DAC outputs
+//
+class audioDAC : public audioDevice
+{
+  public:
+    audioDAC(audioDeviceIdGenerator *idgen, enum AUDIO_DAC type);
+    ~audioDAC(){};
+
+    AudioStream *getOutputStream(uint8_t aduio_ch);  
+
+  private:
+    AudioOutputI2S *m_output{NULL};
+
+    enum AUDIO_DAC m_type;
+
+};
+
 
 
 
@@ -49,6 +79,8 @@ class audioEffektDelay : public audioDevice
   public:
     audioEffektDelay(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
     ~audioEffektDelay(){};
+
+    AudioStream *getOutputStream(uint8_t aduio_ch); 
 
   protected:
     void updateLeft(uint32_t id, float val);

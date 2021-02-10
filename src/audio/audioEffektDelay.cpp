@@ -1,11 +1,17 @@
 #include <string.h>
 #include <functional>
 
+#include <SD.h>
+#include <SPI.h>
+#include <SerialFlash.h>
+
 #include <Audio.h>
 #include <Wire.h>
 
 #include "audioEffekt.h"
 #include "audioDevice.h"
+
+
 
 
 
@@ -25,12 +31,6 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
 
   m_id = idgen->generateID(ID_TYPE_DEVICE_DELAY_EFFEKT);
 
-
-#ifdef DEBUG_AUDIO_DEVICE 
-  sprintf(str_, "create delay effekt: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
-  Serial.print(str_);
-#endif    
-
   //create params
   auto cb = std::bind( &audioEffektDelay::updateLeft, 
                        this, std::placeholders::_1, std::placeholders::_2 );
@@ -39,8 +39,34 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                                             UNIT_TIME,
                                             aef_label_delay_param_left, aef_label_delay_param_left,
                                             cb ) );
+
+  //
+  // in1 -> out1
+  // in2 -> out2
+  //generate audio patch
+  for(int i=0; i<2; i++){
+    AudioMixer4 *in  = new AudioMixer4();
+    AudioMixer4 *out = new AudioMixer4();
+    m_mix_in.push_back(in);
+    m_mix_out.push_back(out);
+    m_cords.push_back(new AudioConnection( *in, 0, *out, 0 ));
+  }
+
+#ifdef DEBUG_AUDIO_DEVICE 
+  sprintf(str_, "created delay effekt: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
+  Serial.print(str_);
+#endif    
+
 }
 
+
+AudioStream *audioEffektDelay::getOutputStream(uint8_t audio_ch)
+{
+  if(audio_ch < m_mix_out.size()){
+    return m_mix_out.at(audio_ch);
+  }
+  return NULL;
+}
 
 void audioEffektDelay::updateLeft(uint32_t id, float val)
 {
@@ -52,5 +78,7 @@ void audioEffektDelay::updateLeft(uint32_t id, float val)
   Serial.print(str_);
 #endif  
 }
+
+
 
 
