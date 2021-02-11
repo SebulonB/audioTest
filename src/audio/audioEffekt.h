@@ -23,10 +23,12 @@ enum AUDIO_DAC
 };
 
 
-
 //
 // All kinds of ADC input
 //
+const char aef_adc_label_short[] PROGMEM = "adc";
+const char aef_adc_label_long[]  PROGMEM = "analog in";
+
 class audioADC : public audioDevice
 {
   public:
@@ -45,6 +47,9 @@ class audioADC : public audioDevice
 //
 // All kinds of DAC outputs
 //
+const char aef_dac_label_short[] PROGMEM = "dac";
+const char aef_dac_label_long[]  PROGMEM = "analog out";
+
 class audioDAC : public audioDevice
 {
   public:
@@ -64,7 +69,22 @@ class audioDAC : public audioDevice
 // Main Input Mixer Channel
 // Mixer with Pan and Mute input
 //
-// class 
+const char aef_mixer_label_short[] PROGMEM = "mix";
+const char aef_mixer_label_long[]  PROGMEM = "mixer";
+
+
+class audioMixer : public audioDevice
+{
+  public:
+    audioMixer(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
+    ~audioMixer(){};
+
+    AudioStream *getOutputStream(uint8_t aduio_ch);  
+
+  protected:
+    void updateVolume(uint32_t id, float val);
+
+}; 
 
 
 

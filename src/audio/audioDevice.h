@@ -23,6 +23,8 @@ const char ad_label_drywet_short[] PROGMEM = "wet";
 const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
 const char ad_label_volume_short[] PROGMEM = "vol";
 const char ad_label_volume_long[]  PROGMEM = "volume";
+const char ad_label_pan_short[]    PROGMEM = "pan";
+const char ad_label_pan_long[]     PROGMEM = "pan";
 
 //
 enum ID_TYPE
@@ -30,6 +32,7 @@ enum ID_TYPE
   ID_TYPE_PARAM = 0,
   ID_TYPE_DEVICE_INPUT,
   ID_TYPE_DEVICE_OUTPUT,
+  ID_TYPE_DEVICE_MIXER,
   ID_TYPE_DEVICE_DELAY_EFFEKT,
 };
 
@@ -124,15 +127,35 @@ class audioDeviceParam
       return error_str;  
     }
 
-    float getValue(){
-      return m_value;
+    bool  isType(enum ID_TYPE type){
+      if(static_cast<enum ID_TYPE>(m_id>>16) == type){
+        return true;
+      }
+      else{
+        return false;
+      }
     }
+
+    float getValue(){          return m_value; }
+    
+    float getValueScaledMax(){ return m_val_max; }
+
+    float getValueScaledMin(){ return m_val_min; }
+
+    float getValueScaled(){    return m_value_scaled; }
    
-    void  setValue(float val){
-      if(val >= m_val_min && val <= m_val_max){
+
+    void  setValue(float val){  
+      if(val >= -1.0 && val <= 1.0)
+      {
+        
         m_value = val;
-        if(update_callback != NULL){    
-          update_callback(m_id, val);
+        float scaled = m_val_min + (m_val_max - m_val_min)*val;
+        if( scaled >= m_val_min && scaled <= m_val_max )
+        {
+          if(update_callback != NULL){    
+            update_callback(m_id, val);
+          }
         }
       }
     }
@@ -146,6 +169,7 @@ class audioDeviceParam
     float m_val_max{1.};
     float m_val_min{0.};
     float m_value{0.};
+    float m_value_scaled{0.};
     enum PARAM_UNIT m_unit{UNIT_PERCENT};
     
     //update callback audioEffekt
@@ -179,6 +203,15 @@ class audioDevice
       
       return error_str;  
     }
+
+    bool  isType(enum ID_TYPE type){
+      if(static_cast<enum ID_TYPE>(m_id>>16) == type){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }    
 
     void updateParam(uint32_t id, float val)
     {
@@ -230,7 +263,14 @@ class audioDevice
       return 0;
     }
 
-    virtual AudioStream *getOutputStream(uint8_t audio_ch);   
+    virtual AudioStream *getOutputStream(uint8_t audio_ch);  
+
+    int getConCount(uint8_t ch){
+      if(ch<m_mix_in_connections.size()){
+        return m_mix_in_connections.at(ch);
+      }
+      return 0;
+    } 
 
   protected:
     const char *m_label_long{NULL};
@@ -253,6 +293,8 @@ class audioDevice
 
     //Patch Cords
     std::vector<AudioConnection*> m_cords;
+
+    const int m_max_channels{2}; //0:left / 1:rigth
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE

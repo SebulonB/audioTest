@@ -19,8 +19,15 @@ audioEngine::audioEngine()
   //Audio Input
   m_devices.push_back( new audioADC( idgen, AUDIO_ADC_I2S_HEX ) );
 
-  //Aduio Output
+  //Audio Output
   m_devices.push_back( new audioDAC( idgen, AUDIO_DAC_I2S ) ); 
+
+  //Four Input Mixers
+  for(int i=0; i<4; i++){
+    m_devices.push_back( new audioMixer( idgen, 
+                                         aef_mixer_label_short,
+                                         aef_mixer_label_long ) );
+  }
 
   //create some effekts
   m_devices.push_back( new audioEffektDelay( idgen, 
@@ -30,15 +37,19 @@ audioEngine::audioEngine()
   auto adc = m_devices.at(0); 
   auto dac = m_devices.at(1); 
   
-  dac->setInputStream(adc->getOutputStream(0), 0, 0 ); //left
-  dac->setInputStream(adc->getOutputStream(0), 1, 1 ); //right
+  //
+  // adc -> mix -> dac
+  //
+  for(auto mix : m_devices){
+    if(mix->isType(ID_TYPE_DEVICE_MIXER)){
+      
+      mix->setInputStream(adc->getOutputStream(0), mix->getConCount(0), 0);
+      mix->setInputStream(adc->getOutputStream(0), mix->getConCount(1), 1);
 
-  dac->setInputStream(adc->getOutputStream(0), 2, 0 ); //left
-  dac->setInputStream(adc->getOutputStream(0), 3, 1 ); //right
-
-  dac->setInputStream(adc->getOutputStream(0), 4, 0 ); //left
-  dac->setInputStream(adc->getOutputStream(0), 5, 1 ); //right  
-
+      dac->setInputStream(mix->getOutputStream(0), 0, 0 ); //left
+      dac->setInputStream(mix->getOutputStream(1), 0, 1 ); //right
+    }
+  }
 
 #ifdef AUDIO_ENGINE_DEBUG
   sprintf(str_, "Audio Engine Init: devices(%d)\n", m_devices.size());

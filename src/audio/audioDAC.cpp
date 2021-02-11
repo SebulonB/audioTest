@@ -15,6 +15,10 @@
 
 audioDAC::audioDAC( audioDeviceIdGenerator *idgen, enum AUDIO_DAC type )
 {
+  
+  //std label
+  m_label_long  = aef_dac_label_long;
+  m_label_short = aef_dac_label_short;
 
   m_id = idgen->generateID(ID_TYPE_DEVICE_INPUT);
   m_type = type;

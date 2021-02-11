@@ -16,6 +16,11 @@
 audioADC::audioADC( audioDeviceIdGenerator *idgen, enum AUDIO_ADC type )
 {
 
+  //std label
+  m_label_long  = aef_adc_label_long;
+  m_label_short = aef_adc_label_short;
+
+
   m_id = idgen->generateID(ID_TYPE_DEVICE_INPUT);
   m_type = type;
   //if type == AUDIO_ADC_INPUT_I2S_HEX
