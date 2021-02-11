@@ -14,36 +14,36 @@ audioEngine::audioEngine()
 {
 
   //ID Generator
-  // idgen = new audioDeviceIdGenerator();
+  idgen = new audioDeviceIdGenerator();
 
   // audioADC *adc = new audioADC( idgen, AUDIO_ADC_I2S_HEX );
   // audioDAC *dac = new audioDAC( idgen, AUDIO_DAC_I2S );
   
 
-  // //Audio Input
+  //Audio Input
   // m_devices.push_back( adc );
   // m_devices.push_back( dac );
-  // // m_devices.push_back( new audioADC( idgen, AUDIO_ADC_I2S_HEX ) );
+  m_devices.push_back( new audioADC( idgen, AUDIO_ADC_I2S_HEX ) );
 
-  // // //Aduio Output
-  // // m_devices.push_back( new audioDAC( idgen, AUDIO_DAC_I2S ) ); 
+  //Aduio Output
+  m_devices.push_back( new audioDAC( idgen, AUDIO_DAC_I2S ) ); 
 
-  // // //create some effekts
-  // // m_devices.push_back( new audioEffektDelay( idgen, 
-  // //                                            aef_delay1_label_short, 
-  // //                                            aef_delay1_label_long) );
-  // //connect
-  // // auto adc = m_devices.at(0); 
-  // // auto dac = m_devices.at(1); 
+  //create some effekts
+  m_devices.push_back( new audioEffektDelay( idgen, 
+                                             aef_delay1_label_short, 
+                                             aef_delay1_label_long) );
+  //connect
+  auto adc = m_devices.at(0); 
+  auto dac = m_devices.at(1); 
   
-  // dac->setInputStream(adc->getOutputStream(0), 0, 0 ); //left
-  // dac->setInputStream(adc->getOutputStream(0), 1, 1 ); //right
+  dac->setInputStream(adc->getOutputStream(0), 0, 0 ); //left
+  dac->setInputStream(adc->getOutputStream(0), 1, 1 ); //right
 
-  // dac->setInputStream(adc->getOutputStream(0), 2, 0 ); //left
-  // dac->setInputStream(adc->getOutputStream(0), 3, 1 ); //right
+  dac->setInputStream(adc->getOutputStream(0), 2, 0 ); //left
+  dac->setInputStream(adc->getOutputStream(0), 3, 1 ); //right
 
-  // dac->setInputStream(adc->getOutputStream(0), 4, 0 ); //left
-  // dac->setInputStream(adc->getOutputStream(0), 5, 1 ); //right  
+  dac->setInputStream(adc->getOutputStream(0), 4, 0 ); //left
+  dac->setInputStream(adc->getOutputStream(0), 5, 1 ); //right  
 
 
 #ifdef AUDIO_ENGINE_DEBUG
