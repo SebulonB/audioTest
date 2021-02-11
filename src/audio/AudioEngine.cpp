@@ -16,13 +16,7 @@ audioEngine::audioEngine()
   //ID Generator
   idgen = new audioDeviceIdGenerator();
 
-  // audioADC *adc = new audioADC( idgen, AUDIO_ADC_I2S_HEX );
-  // audioDAC *dac = new audioDAC( idgen, AUDIO_DAC_I2S );
-  
-
   //Audio Input
-  // m_devices.push_back( adc );
-  // m_devices.push_back( dac );
   m_devices.push_back( new audioADC( idgen, AUDIO_ADC_I2S_HEX ) );
 
   //Aduio Output

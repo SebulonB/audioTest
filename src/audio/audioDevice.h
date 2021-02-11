@@ -208,16 +208,21 @@ class audioDevice
 
     int setInputStream(AudioStream *pin, uint8_t stream_ch, uint8_t audio_ch)
     {
-      if(audio_ch    >= AUDIO_DEVICE_MAX_CHANNELS)  {return -1;}
-      if(in_cord_cnt >= AUDIO_DEVICE_MAX_IN_CHORDS) {return -1;}
-      if(pin == NULL)                               {return -1;}
+      if(pin == NULL)                                       {return -1;}
 
-      if( audio_ch < m_mix_in.size() )
+      if(    audio_ch < m_mix_in.size() 
+          && audio_ch < m_mix_in_connections.size() )
       {
-        m_cords.push_back(new AudioConnection( *pin, stream_ch, *m_mix_in.at(audio_ch), in_cord_cnt++) );
+        int cord_c = m_mix_in_connections.at(audio_ch);
+        if( cord_c + 1 >= m_mix_in_max_connections)          {return -1;}
+
+        m_cords.push_back(new AudioConnection( *pin, stream_ch, 
+                                               *m_mix_in.at(audio_ch), cord_c ));
+        
+        m_mix_in_connections.at(audio_ch) += 1;
 
 #ifdef DEBUG_AUDIO_DEVICE 
-        sprintf(str_, "setInputCord: device( %s ) in_ch(%d) audio_ch(%d) cord_cnt(%d) \n", getLabel(LABEL_SHORT), stream_ch, audio_ch, in_cord_cnt);
+        sprintf(str_, "setInputCord: device( %s ) stream_in(%d) audio_ch(%d) cord_cnt(%d) \n", getLabel(LABEL_SHORT), stream_ch, audio_ch, cord_c);
         Serial.print(str_);
 #endif
       }
@@ -238,18 +243,21 @@ class audioDevice
     std::vector<audioDeviceParam *> m_params;   
     audioDeviceParam * m_used_param = NULL;
 
-    //Audio Input/Out
+    //Audio Input
     std::vector<AudioMixer4 *>    m_mix_in;
+    std::vector<int>              m_mix_in_connections;
+    const int                     m_mix_in_max_connections{4};
+
+    //Audio Out
     std::vector<AudioMixer4 *>    m_mix_out;
+
+    //Patch Cords
     std::vector<AudioConnection*> m_cords;
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE
     char str_[100];
 #endif  
-
-  private:
-    uint8_t in_cord_cnt{0};
 
 };
 

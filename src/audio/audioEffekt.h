@@ -60,6 +60,11 @@ class audioDAC : public audioDevice
 
 };
 
+//
+// Main Input Mixer Channel
+// Mixer with Pan and Mute input
+//
+// class 
 
 
 
