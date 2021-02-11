@@ -40,14 +40,16 @@ audioEngine::audioEngine()
   //
   // adc -> mix -> dac
   //
+  uint8_t adc_cnt = 0;
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
-      mix->setInputStream(adc->getOutputStream(0), mix->getConCount(0), 0);
-      mix->setInputStream(adc->getOutputStream(0), mix->getConCount(1), 1);
+      mix->setInputStream(adc, 0, adc_cnt, 0);
+      mix->setInputStream(adc, 0, adc_cnt, 1);
+      adc_cnt++;
 
-      dac->setInputStream(mix->getOutputStream(0), 0, 0 ); //left
-      dac->setInputStream(mix->getOutputStream(1), 0, 1 ); //right
+      dac->setInputStream(mix, 0, 0, 0 ); //left
+      dac->setInputStream(mix, 1, 0, 1 ); //right
     }
   }
 
