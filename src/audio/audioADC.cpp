@@ -31,7 +31,7 @@ audioADC::audioADC( audioDeviceIdGenerator *idgen, enum AUDIO_ADC type )
 
 AudioStream *audioADC::getOutputStream(uint8_t audio_ch)
 {
-  if(m_type == AUDIO_ADC_I2S_HEX && audio_ch >= 6){
+  if(m_type == AUDIO_ADC_I2S_HEX && audio_ch <= 6){
     return m_input;
   }
   return NULL;

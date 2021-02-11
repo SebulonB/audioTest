@@ -206,16 +206,17 @@ class audioDevice
       }
     }
 
-    int setInputStream(AudioStream &pin, uint8_t stream_ch, uint8_t audio_ch)
+    int setInputStream(AudioStream *pin, uint8_t stream_ch, uint8_t audio_ch)
     {
       if(audio_ch    >= AUDIO_DEVICE_MAX_CHANNELS)  {return -1;}
       if(in_cord_cnt >= AUDIO_DEVICE_MAX_IN_CHORDS) {return -1;}
+      if(pin == NULL)                               {return -1;}
 
       if( audio_ch < m_mix_in.size() )
       {
-        m_cords.push_back(new AudioConnection( pin, stream_ch, *m_mix_in.at(audio_ch), in_cord_cnt++) );
+        m_cords.push_back(new AudioConnection( *pin, stream_ch, *m_mix_in.at(audio_ch), in_cord_cnt++) );
 
-#ifdef ADUIO_ENGINE_DEBUG 
+#ifdef DEBUG_AUDIO_DEVICE 
         sprintf(str_, "setInputCord: device( %s ) in_ch(%d) audio_ch(%d) cord_cnt(%d) \n", getLabel(LABEL_SHORT), stream_ch, audio_ch, in_cord_cnt);
         Serial.print(str_);
 #endif
