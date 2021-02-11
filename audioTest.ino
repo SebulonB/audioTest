@@ -48,12 +48,12 @@ void setup(void) {
 
   //
   //Print delay_effekts
-  // std::vector<audioDevice *> delay_effekts;
-  // engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
-  // for( auto device : delay_effekts){
-  //   sprintf(str_, "List of DelayEffkts: (%s)\n", device->getLabel(LABEL_LONG));
-  //   Serial.print(str_);
-  // }
+  std::vector<audioDevice *> delay_effekts;
+  engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
+  for( auto device : delay_effekts){
+    sprintf(str_, "List of DelayEffkts: (%s)\n", device->getLabel(LABEL_LONG));
+    Serial.print(str_);
+  }
 
 }
 

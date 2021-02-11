@@ -35,32 +35,30 @@ void AudioPatchControl::init(void)
 
   // p_delay->updateParam(0, 1.23);
   // |init mixers|
-  float val = 1.0;
-  for(int i=0; i<4; i++){
+  // float val = 1.0;
+  // for(int i=0; i<4; i++){
 
-    //output
-    if(i<2){val = 1.0;} //turn main mix on
-    else   {val = 0.0;} 
-    MasterLeft.gain(i, val);
-    MasterRight.gain(i, val);
+  //   //Input 
+  //   val = 0.0;
+  //   mix_in__ch1_4_left.gain(i,  val);
+  //   mix_in__ch1_4_right.gain(i, val);
 
-    //Input 
-    val = 0.0;
-    mix_in__ch1_4_left.gain(i,  val);
-    mix_in__ch1_4_right.gain(i, val);
+  //   mix_in__ch5_6_left.gain(i,  val);
+  //   mix_in__ch5_6_right.gain(i, val);   
 
-    mix_in__ch5_6_left.gain(i,  val);
-    mix_in__ch5_6_right.gain(i, val);   
+  //   //delay init
+  //   val = 1.0;
+  //   Mix_LeftIn.gain(i, val);
+  //   Mix_RightIn.gain(i, val);
 
-    //delay init
-    val = 1.0;
-    Mix_LeftIn.gain(i, val);
-    Mix_RightIn.gain(i, val);
-  }
+  //   MasterLeft.gain(i, val);
+  //   MasterRight.gain(i, val);
 
-  for(int i=0;i<6;i++){
-    setHighPass(i);
-  } 
+  // }
+
+  // for(int i=0;i<6;i++){
+  //   setHighPass(i);
+  // } 
 }
 
 
@@ -87,39 +85,39 @@ void AudioPatchControl::updateInputMixer(uint8_t ch)
   
   //adjust SendSignal to Fader
   //check send 
-  enum UserInterface::DIAL_PAGE page = (enum UserInterface::DIAL_PAGE)(ch+UserInterface::DIAL_PAGE_SEND_CH1);
-  for(int i=0; i<6;i++){
-    setSendEffect(page,i);
-  }
+  // enum UserInterface::DIAL_PAGE page = (enum UserInterface::DIAL_PAGE)(ch+UserInterface::DIAL_PAGE_SEND_CH1);
+  // for(int i=0; i<6;i++){
+  //   setSendEffect(page,i);
+  // }
  
 
-  if(pan < 0.0){
-    //left
-    if(ch<4)
-    {
-      mix_in__ch1_4_left.gain(ch,   1.0*vol);
-      mix_in__ch1_4_right.gain(ch, (1. + pan)*vol);
-    }
-    else
-    {
-      mix_in__ch5_6_left.gain(ch-4,   1.0*vol);
-      mix_in__ch5_6_right.gain(ch-4, (1. + pan)*vol);    
-    } 
-  }
-  else if(pan >= 0.0)
-  {
-    //right
-    if(ch<4)
-    {
-      mix_in__ch1_4_left.gain(ch,   (1. - pan)*vol);
-      mix_in__ch1_4_right.gain(ch,   1.0*vol);
-    }
-    else
-    {
-      mix_in__ch5_6_left.gain(ch-4,  (1. - pan)*vol);
-      mix_in__ch5_6_right.gain(ch-4,  1.0*vol);   
-    }       
-  }
+  // if(pan < 0.0){
+  //   //left
+  //   if(ch<4)
+  //   {
+  //     mix_in__ch1_4_left.gain(ch,   1.0*vol);
+  //     mix_in__ch1_4_right.gain(ch, (1. + pan)*vol);
+  //   }
+  //   else
+  //   {
+  //     mix_in__ch5_6_left.gain(ch-4,   1.0*vol);
+  //     mix_in__ch5_6_right.gain(ch-4, (1. + pan)*vol);    
+  //   } 
+  // }
+  // else if(pan >= 0.0)
+  // {
+  //   //right
+  //   if(ch<4)
+  //   {
+  //     mix_in__ch1_4_left.gain(ch,   (1. - pan)*vol);
+  //     mix_in__ch1_4_right.gain(ch,   1.0*vol);
+  //   }
+  //   else
+  //   {
+  //     mix_in__ch5_6_left.gain(ch-4,  (1. - pan)*vol);
+  //     mix_in__ch5_6_right.gain(ch-4,  1.0*vol);   
+  //   }       
+  // }
 }
 
 void AudioPatchControl::setHighPass(uint8_t ch)
@@ -139,32 +137,32 @@ void AudioPatchControl::setHighPass(uint8_t ch)
     Serial.print("\n");
   }
 
-  switch(ch){
+  // switch(ch){
     
-    case 0:
-      biquad_ch1.setHighpass(0, filter, 0.707);
-    break;
+  //   case 0:
+  //     biquad_ch1.setHighpass(0, filter, 0.707);
+  //   break;
     
-    case 1:
-      biquad_ch2.setHighpass(0, filter, 0.707);
-    break;
+  //   case 1:
+  //     biquad_ch2.setHighpass(0, filter, 0.707);
+  //   break;
     
-    case 2:
-      biquad_ch3.setHighpass(0, filter, 0.707);
-    break;
+  //   case 2:
+  //     biquad_ch3.setHighpass(0, filter, 0.707);
+  //   break;
     
-    case 3:
-      biquad_ch4.setHighpass(0, filter, 0.707);
-    break;     
+  //   case 3:
+  //     biquad_ch4.setHighpass(0, filter, 0.707);
+  //   break;     
 
-    case 4:
-      biquad_ch5.setHighpass(0, filter, 0.707);
-    break;  
+  //   case 4:
+  //     biquad_ch5.setHighpass(0, filter, 0.707);
+  //   break;  
 
-    case 5:
-      biquad_ch6.setHighpass(0, filter, 0.707);
-    break;                                     
-  }  
+  //   case 5:
+  //     biquad_ch6.setHighpass(0, filter, 0.707);
+  //   break;                                     
+  // }  
 }
 
 void AudioPatchControl::setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_t ch)
@@ -292,10 +290,10 @@ void AudioPatchControl::setDelayParam(uint8_t ch)
 
 void AudioPatchControl::updatePeak(void)
 {
-  if (peak1.available()) {p_ui->updateBars(0, peak1.read());}
-  if (peak2.available()) {p_ui->updateBars(1, peak2.read());}
-  if (peak3.available()) {p_ui->updateBars(2, peak3.read());} 
-  if (peak4.available()) {p_ui->updateBars(3, peak4.read());}  
-  if (peak5.available()) {p_ui->updateBars(4, peak5.read());}   
-  if (peak6.available()) {p_ui->updateBars(5, peak6.read());}    
+  // if (peak1.available()) {p_ui->updateBars(0, peak1.read());}
+  // if (peak2.available()) {p_ui->updateBars(1, peak2.read());}
+  // if (peak3.available()) {p_ui->updateBars(2, peak3.read());} 
+  // if (peak4.available()) {p_ui->updateBars(3, peak4.read());}  
+  // if (peak5.available()) {p_ui->updateBars(4, peak5.read());}   
+  // if (peak6.available()) {p_ui->updateBars(5, peak6.read());}    
 }
