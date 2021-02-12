@@ -69,9 +69,14 @@ class audioDAC : public audioDevice
 // Main Input Mixer Channel
 // Mixer with Pan and Mute input
 //
-const char aef_mixer_label_short[] PROGMEM = "mix";
-const char aef_mixer_label_long[]  PROGMEM = "mixer";
-
+const char aef_mixer1_label_short[] PROGMEM = "mix|1";
+const char aef_mixer1_label_long[]  PROGMEM = "mixer|1";
+const char aef_mixer2_label_short[] PROGMEM = "mix|2";
+const char aef_mixer2_label_long[]  PROGMEM = "mixer|2";
+const char aef_mixer3_label_short[] PROGMEM = "mix|3";
+const char aef_mixer3_label_long[]  PROGMEM = "mixer|3";
+const char aef_mixer4_label_short[] PROGMEM = "mix|4";
+const char aef_mixer4_label_long[]  PROGMEM = "mixer|4";
 
 class audioMixer : public audioDevice
 {

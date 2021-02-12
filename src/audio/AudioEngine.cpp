@@ -23,16 +23,35 @@ audioEngine::audioEngine()
   m_devices.push_back( new audioDAC( idgen, AUDIO_DAC_I2S ) ); 
 
   //Four Input Mixers
-  for(int i=0; i<4; i++){
-    m_devices.push_back( new audioMixer( idgen, 
-                                         aef_mixer_label_short,
-                                         aef_mixer_label_long ) );
-  }
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer1_label_short,
+                                       aef_mixer1_label_long ) );
 
-  //create some effekts
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer2_label_short,
+                                       aef_mixer2_label_long ) );
+
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer3_label_short,
+                                       aef_mixer3_label_long ) );
+
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer4_label_short,
+                                       aef_mixer4_label_long ) );   
+
+  //create delay Effekts
   m_devices.push_back( new audioEffektDelay( idgen, 
                                              aef_delay1_label_short, 
                                              aef_delay1_label_long) );
+
+  m_devices.push_back( new audioEffektDelay( idgen, 
+                                             aef_delay2_label_short, 
+                                             aef_delay2_label_long) );
+
+  m_devices.push_back( new audioEffektDelay( idgen, 
+                                             aef_delay3_label_short, 
+                                             aef_delay3_label_long) );  
+
   //connect
   auto adc = m_devices.at(0); 
   auto dac = m_devices.at(1); 

@@ -69,9 +69,6 @@ void AudioPatchControl::updateInputMixer(uint8_t ch)
   float pan = p_ui->getDialVal(UserInterface::DIAL_PAGE_PAN, ch);
   float vol = p_ui->getFaderVal(ch);
 
-  pan -= 0.5;
-  pan *= 2;  
-
   if(m_debug){
     Serial.print("Vol/Pan: ");
     Serial.print(ch);
@@ -83,41 +80,14 @@ void AudioPatchControl::updateInputMixer(uint8_t ch)
   }
   //mixer ch1_4
   
-  //adjust SendSignal to Fader
-  //check send 
-  // enum UserInterface::DIAL_PAGE page = (enum UserInterface::DIAL_PAGE)(ch+UserInterface::DIAL_PAGE_SEND_CH1);
-  // for(int i=0; i<6;i++){
-  //   setSendEffect(page,i);
-  // }
- 
+  std::vector<audioDevice *> mixers;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, mixers);
+  if(mixers.size() > ch){
+    mixers.at(ch)->updateParam(0, 0, vol);
+    mixers.at(ch)->updateParam(0, 1, pan);
+  }
 
-  // if(pan < 0.0){
-  //   //left
-  //   if(ch<4)
-  //   {
-  //     mix_in__ch1_4_left.gain(ch,   1.0*vol);
-  //     mix_in__ch1_4_right.gain(ch, (1. + pan)*vol);
-  //   }
-  //   else
-  //   {
-  //     mix_in__ch5_6_left.gain(ch-4,   1.0*vol);
-  //     mix_in__ch5_6_right.gain(ch-4, (1. + pan)*vol);    
-  //   } 
-  // }
-  // else if(pan >= 0.0)
-  // {
-  //   //right
-  //   if(ch<4)
-  //   {
-  //     mix_in__ch1_4_left.gain(ch,   (1. - pan)*vol);
-  //     mix_in__ch1_4_right.gain(ch,   1.0*vol);
-  //   }
-  //   else
-  //   {
-  //     mix_in__ch5_6_left.gain(ch-4,  (1. - pan)*vol);
-  //     mix_in__ch5_6_right.gain(ch-4,  1.0*vol);   
-  //   }       
-  // }
+
 }
 
 void AudioPatchControl::setHighPass(uint8_t ch)
@@ -137,32 +107,7 @@ void AudioPatchControl::setHighPass(uint8_t ch)
     Serial.print("\n");
   }
 
-  // switch(ch){
-    
-  //   case 0:
-  //     biquad_ch1.setHighpass(0, filter, 0.707);
-  //   break;
-    
-  //   case 1:
-  //     biquad_ch2.setHighpass(0, filter, 0.707);
-  //   break;
-    
-  //   case 2:
-  //     biquad_ch3.setHighpass(0, filter, 0.707);
-  //   break;
-    
-  //   case 3:
-  //     biquad_ch4.setHighpass(0, filter, 0.707);
-  //   break;     
 
-  //   case 4:
-  //     biquad_ch5.setHighpass(0, filter, 0.707);
-  //   break;  
-
-  //   case 5:
-  //     biquad_ch6.setHighpass(0, filter, 0.707);
-  //   break;                                     
-  // }  
 }
 
 void AudioPatchControl::setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_t ch)
@@ -184,22 +129,6 @@ void AudioPatchControl::setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_
     Serial.print("\n");
   }
 
-  // if(p == 0){
-  //   //firs disconnect
-  //   for(auto cord : _cords){
-  //     delete cord;      
-  //   }
-  //   _cords.clear();
-  // }
-  // else if(p==1){
-  //   for(auto cord : _cords){
-  //     delete cord;      
-  //   }
-  //   _cords.clear();
-
-  //   _cords.push_back(new AudioConnection(biquad_ch1, 0, MixDelayInLeft, 0));
-  //   _cords.push_back(new AudioConnection(biquad_ch1, 0, MixDelayInRight, 0));      
-  // }
 }
 
 void AudioPatchControl::setReverbParam(uint8_t ch)
@@ -216,28 +145,7 @@ void AudioPatchControl::setReverbParam(uint8_t ch)
     Serial.print(val);     
     Serial.print("\n");
   } 
-
-  // //room
-  // if      (ch == 0)
-  // {   
-  //   reverb_left.roomsize(val);
-  //   reverb_right.roomsize(val);     
-  // } 
-  // //damping
-  // else if (ch == 1)
-  // {   
-  //   reverb_left.damping(val);
-  //   reverb_right.damping(val);    
-  // }  
-  // //dry/wet
-  // else if(ch == 5)
-  // {
-  //   reverb_drywet_left.gain(0, (1.0 - val));
-  //   reverb_drywet_left.gain(1, val);
-
-  //   reverb_drywet_right.gain(0, (1.0 - val));
-  //   reverb_drywet_right.gain(1, val);    
-  // }         
+      
 }
 
 void AudioPatchControl::setDelayParam(uint8_t ch)
@@ -256,36 +164,6 @@ void AudioPatchControl::setDelayParam(uint8_t ch)
     Serial.print("\n");  
   }
 
-  // //time left
-  // if      (ch == 0)
-  // {   
-  //   float v = (val*680);
-  //   delay_left.delay(0, v);      
-  // }  
-  // //time right
-  // else if (ch == 1)
-  // {   
-  //   float v = (val*680);
-  //   delay_right.delay(0, v);      
-  // }  
-  // //feedback
-  // else if (ch == 2)
-  // {
-  //   delay_left_feedback.gain(0, 1.0);
-  //   delay_left_feedback.gain(1, val);
-
-  //   delay_rigth_feedback.gain(0, 1.0); 
-  //   delay_rigth_feedback.gain(1, val);           
-  // }
-  // //dry/wet
-  // else if(ch == 5)
-  // {
-  //   delay_drywet_left.gain(0, (1.0 - val));
-  //   delay_drywet_left.gain(1, val);
-
-  //   delay_drywet_right.gain(0, (1.0 - val));
-  //   delay_drywet_right.gain(1, val);    
-  // }
 }
 
 void AudioPatchControl::updatePeak(void)

@@ -31,7 +31,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                        this, std::placeholders::_1, std::placeholders::_2 );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0., 1.25, .8,
+                                            0., 1.111, .9,
                                             UNIT_PERCENT,
                                             ad_label_volume_short, ad_label_volume_long,
                                             cb ) );
@@ -93,9 +93,9 @@ void audioMixer::updateVolume(uint32_t id, float val)
 
 #ifdef DEBUG_AUDIO_DEVICE 
   if(m_used_param == NULL){return;}  
-  sprintf(str_, "mixer updated: device( 0x%08x | %s ) param( 0x%08x | %s ) value( %1.3f | %3.1f)\n",  static_cast<unsigned int>(m_id), m_label_long, 
-                                                                                                           static_cast<unsigned int>(id),   m_used_param->getLabel(LABEL_LONG),
-                                                                                                           val, m_used_param->getValueScaled());
+  sprintf(str_, "mixer updated:  %8s  %8s value( %1.3f | %3.3f)\n",   m_label_long, 
+                                                                      m_used_param->getLabel(LABEL_LONG),
+                                                                      val, m_used_param->getValueScaled() );
   Serial.print(str_);
 #endif  
 }

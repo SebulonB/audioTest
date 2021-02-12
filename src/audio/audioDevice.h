@@ -153,6 +153,7 @@ class audioDeviceParam
         float scaled = m_val_min + (m_val_max - m_val_min)*val;
         if( scaled >= m_val_min && scaled <= m_val_max )
         {
+          m_value_scaled = scaled;
           if(update_callback != NULL){    
             update_callback(m_id, val);
           }
@@ -251,7 +252,7 @@ class audioDevice
           && audio_ch_in < m_mix_in_connections.size() )
       {
         int cord_c = m_mix_in_connections.at(audio_ch_in);
-        if( cord_c + 1 >= m_mix_in_max_connections)          {return -1;}
+        if( cord_c >= m_mix_in_max_connections)          {return -1;}
 
         m_cords.push_back(new AudioConnection( *stream_in, stream_ch, 
                                                *m_mix_in.at(audio_ch_in), cord_c ));
@@ -259,7 +260,7 @@ class audioDevice
         m_mix_in_connections.at(audio_ch_in) += 1;
 
 #ifdef DEBUG_AUDIO_DEVICE 
-        sprintf( str_, "setInputCord:  %s ch(%d) stream(%d) -> %s ch(%d) cord(%d) \n",
+        sprintf( str_, "setInputCord:  %8s ch(%d) stream(%d) -> %8s ch(%d) cord(%d) \n",
                         pin->getLabel(LABEL_SHORT), audio_ch_out, stream_ch, 
                         getLabel(LABEL_SHORT), audio_ch_in, cord_c);
         Serial.print(str_);
