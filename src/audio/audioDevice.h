@@ -240,8 +240,7 @@ class audioDevice
       }
     }
 
-    int setInputStream( audioDevice *pin, uint8_t audio_ch_out,
-                        uint8_t stream_ch, uint8_t audio_ch_in )
+    int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
     {
       if(pin == NULL) {return -1;}
 
@@ -254,14 +253,14 @@ class audioDevice
         int cord_c = m_mix_in_connections.at(audio_ch_in);
         if( cord_c >= m_mix_in_max_connections)          {return -1;}
 
-        m_cords.push_back(new AudioConnection( *stream_in, stream_ch, 
+        m_cords.push_back(new AudioConnection( *stream_in, 0,
                                                *m_mix_in.at(audio_ch_in), cord_c ));
         
         m_mix_in_connections.at(audio_ch_in) += 1;
 
 #ifdef DEBUG_AUDIO_DEVICE 
-        sprintf( str_, "setInputCord:  %8s ch(%d) stream(%d) -> %8s ch(%d) cord(%d) \n",
-                        pin->getLabel(LABEL_SHORT), audio_ch_out, stream_ch, 
+        sprintf( str_, "setInputCord:  %8s ch(%d) -> %8s ch(%d) cord(%d) \n",
+                        pin->getLabel(LABEL_SHORT), audio_ch_out, 
                         getLabel(LABEL_SHORT), audio_ch_in, cord_c);
         Serial.print(str_);
 #endif
