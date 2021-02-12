@@ -9,7 +9,7 @@
 
 
 
-
+#define DEBUG_ADC
 
 
 
@@ -26,7 +26,22 @@ audioADC::audioADC( audioDeviceIdGenerator *idgen, enum AUDIO_ADC type )
   m_input = new AudioInputI2SHex();
 
 
-#ifdef DEBUG_AUDIO_DEVICE 
+  //
+  // adc[0] -> amps.at(0)
+  // adc[1] -> amps.at(1)
+  //  ...
+  // adc[5] -> amps.at(5)
+  //
+  if(m_type == AUDIO_ADC_I2S_HEX){
+    for(int i=0; i<6; i++){
+      AudioAmplifier *amp = new AudioAmplifier();
+      m_amps.push_back( amp );
+      amp->gain(1.0);
+      m_cords.push_back(new AudioConnection( *m_input, i, *amp, 0 ));
+    }
+  }
+
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_ADC)
   sprintf(str_, "created adc: device( 0x%08x | %d )\n", static_cast<unsigned int>(m_id), m_type);
   Serial.print(str_);
 #endif    
@@ -35,8 +50,10 @@ audioADC::audioADC( audioDeviceIdGenerator *idgen, enum AUDIO_ADC type )
 
 AudioStream *audioADC::getOutputStream(uint8_t audio_ch)
 {
-  if(m_type == AUDIO_ADC_I2S_HEX && audio_ch <= 6){
-    return m_input;
+  if(    m_type == AUDIO_ADC_I2S_HEX 
+      && audio_ch < m_amps.size())
+  {
+    return m_amps.at(audio_ch);
   }
   return NULL;
 }

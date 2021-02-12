@@ -39,6 +39,7 @@ class audioADC : public audioDevice
 
   private:
     AudioInputI2SHex *m_input{NULL};
+    std::vector<AudioAmplifier *> m_amps;           
 
     enum AUDIO_ADC m_type;
 

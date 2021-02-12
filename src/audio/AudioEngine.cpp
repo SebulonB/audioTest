@@ -63,8 +63,8 @@ audioEngine::audioEngine()
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
-      mix->setInputStream(adc, 0, adc_cnt, 0);
-      mix->setInputStream(adc, 0, adc_cnt, 1);
+      mix->setInputStream(adc, adc_cnt, 0, 0);
+      mix->setInputStream(adc, adc_cnt, 0, 1);
       adc_cnt++;
 
       dac->setInputStream(mix, 0, 0, 0 ); //left
