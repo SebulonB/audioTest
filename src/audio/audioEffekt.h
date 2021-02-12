@@ -114,10 +114,13 @@ class audioEffektDelay : public audioDevice
     AudioStream *getOutputStream(uint8_t aduio_ch); 
 
   protected:
-    void updateLeft(uint32_t id, float val);
+    void updateTime(uint32_t id, float val);
+    void updateFeedback(uint32_t id, float val);
 
   private:
-    int ku{9};
+   std::list<AudioEffectDelay *> m_delay;
+   std::list<AudioMixer4 *>      m_feedback_mix;
+   //std::list<AudioMixer4 *>      m_mix_out__drywet; -->m_mix_out
 
 };
 

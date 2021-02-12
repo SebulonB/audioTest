@@ -91,12 +91,7 @@ void audioMixer::updateVolume(uint32_t id, float val)
   }
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
-  if(m_used_param != NULL){
-    sprintf(str_, "mixer updated:  %8s  %8s value( %1.3f | %3.3f)\n",   m_label_long, 
-                                                                        m_used_param->getLabel(LABEL_LONG),
-                                                                        val, m_used_param->getValueScaled() );
-    Serial.print(str_);
-  }
+  printCallbackUpdate(val);
 #endif  
 }
 

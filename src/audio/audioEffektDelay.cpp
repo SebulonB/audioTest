@@ -11,8 +11,26 @@
 #include "audioEffekt.h"
 #include "audioDevice.h"
 
+#define DEBUG_AUDIO_EFFEKT_DELAY
 
 
+/*
+
+  checkout: https://www.pjrc.com/teensy/gui/ 
+
+
+// GUItool: begin automatically generated code
+AudioInputI2SHex         i2s_hex1;       //xy=58,570.75
+AudioEffectDelay         m_delay;         //xy=287.75,707.75
+AudioMixer4              m_feedback_mix;         //xy=293.75,585.75
+AudioMixer4              m_mix_out__drywet;         //xy=497.75,556.75
+AudioConnection          patchCord1(i2s_hex1, 0, m_mix_out__drywet, 0);
+AudioConnection          patchCord2(i2s_hex1, 0, m_feedback_mix, 0);
+AudioConnection          patchCord3(m_delay, 0, m_feedback_mix, 1);
+AudioConnection          patchCord4(m_feedback_mix, m_delay);
+AudioConnection          patchCord5(m_feedback_mix, 0, m_mix_out__drywet, 1);
+// GUItool: end automatically generated code
+*/
 
 
 
@@ -31,28 +49,63 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
 
   m_id = idgen->generateID(ID_TYPE_DEVICE_DELAY_EFFEKT);
 
-  //create params
-  auto cb = std::bind( &audioEffektDelay::updateLeft, 
+  //
+  // time Params
+  //
+  auto cb_t = std::bind( &audioEffektDelay::updateTime, 
                        this, std::placeholders::_1, std::placeholders::_2 );
+
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
                                             0., 600., 20.,
                                             UNIT_TIME,
                                             aef_label_delay_param_left, aef_label_delay_param_left,
-                                            cb ) );
+                                            cb_t ) );
 
-  //
-  // in1 -> out1
-  // in2 -> out2
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0., 600., 20.,
+                                            UNIT_TIME,
+                                            aef_label_delay_param_right, aef_label_delay_param_right,
+                                            cb_t ) );  
+
+  auto cb_f = std::bind( &audioEffektDelay::updateTime, 
+                       this, std::placeholders::_1, std::placeholders::_2 );
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0., 1., 0.15,
+                                            UNIT_TIME,
+                                            aef_label_delay_param_right, aef_label_delay_param_right,
+                                            cb_f ) );   
+
   //generate audio patch
   for(int i=0; i<2; i++){
+
     AudioMixer4 *in  = new AudioMixer4();
-    AudioMixer4 *out = new AudioMixer4();
     m_mix_in.push_back(in);
+
+    AudioMixer4 *out = new AudioMixer4();
     m_mix_out.push_back(out);
+
+    AudioMixer4 *feedback = new AudioMixer4();
+    m_feedback_mix.push_back(feedback);
+
+    AudioEffectDelay *delay = new AudioEffectDelay();
+    m_delay.push_back(delay);
+
+    /*
+      AudioConnection          patchCord1(i2s_hex1, 0, m_mix_out__drywet, 0);
+      AudioConnection          patchCord2(i2s_hex1, 0, m_feedback_mix, 0);
+      AudioConnection          patchCord3(m_delay, 0, m_feedback_mix, 1);
+      AudioConnection          patchCord4(m_feedback_mix, m_delay);
+      AudioConnection          patchCord5(m_feedback_mix, 0, m_mix_out__drywet, 1);
+    */
     m_cords.push_back(new AudioConnection( *in, 0, *out, 0 ));
+    m_cords.push_back(new AudioConnection( *in, 0, *feedback, 0 ));
+    m_cords.push_back(new AudioConnection( *feedback, 0, *delay, 0 ));
+    m_cords.push_back(new AudioConnection( *delay, 0, *feedback, 0 ));  
+    m_cords.push_back(new AudioConnection( *delay, 0, *out, 1 ));       
   }
 
-#ifdef DEBUG_AUDIO_DEVICE 
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_EFFEKT_DELAY)
   sprintf(str_, "created delay effekt: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
   Serial.print(str_);
 #endif    
@@ -68,17 +121,24 @@ AudioStream *audioEffektDelay::getOutputStream(uint8_t audio_ch)
   return NULL;
 }
 
-void audioEffektDelay::updateLeft(uint32_t id, float val)
+//
+// Update Callback 
+//
+void audioEffektDelay::updateTime(uint32_t id, float val)
 {
 
-#ifdef DEBUG_AUDIO_DEVICE 
-  sprintf(str_, "update cb: device( 0x%08x | %s ) param( 0x%08x | %s ) value( %3.1f )\n", static_cast<unsigned int>(m_id), m_label_long, 
-                                                                                          static_cast<unsigned int>(id),   m_used_param->getLabel(LABEL_LONG),
-                                                                                          val);
-  Serial.print(str_);
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_EFFEKT_DELAY)
+  printCallbackUpdate(val);
 #endif  
 }
 
+void audioEffektDelay::updateFeedback(uint32_t id, float val)
+{
+
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_EFFEKT_DELAY)
+  printCallbackUpdate(val);
+#endif  
+}
 
 
 

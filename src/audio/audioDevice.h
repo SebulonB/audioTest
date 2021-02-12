@@ -259,9 +259,9 @@ class audioDevice
         m_mix_in_connections.at(audio_ch_in) += 1;
 
 #ifdef DEBUG_AUDIO_DEVICE 
-        sprintf( str_, "setInputCord:  %8s ch(%d) -> %8s ch(%d) cord(%d) \n",
+        sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s ch(%d) \n",
                         pin->getLabel(LABEL_SHORT), audio_ch_out, 
-                        getLabel(LABEL_SHORT), audio_ch_in, cord_c);
+                        getLabel(LABEL_SHORT), audio_ch_in);
         Serial.print(str_);
 #endif
       }
@@ -277,6 +277,17 @@ class audioDevice
       }
       return 0;
     } 
+
+#if defined(DEBUG_AUDIO_DEVICE)
+    void printCallbackUpdate(float val){
+      if(m_used_param != NULL){
+        sprintf(str_, "CB Updated: %6s  %6s ( %1.3f | %3.3f)\n",   m_label_long, 
+                                                                            m_used_param->getLabel(LABEL_LONG),
+                                                                            val, m_used_param->getValueScaled() );
+        Serial.print(str_);
+      }
+    }
+#endif
 
   protected:
     const char *m_label_long{NULL};

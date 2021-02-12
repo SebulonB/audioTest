@@ -46,15 +46,6 @@ void setup(void) {
   init_ui(ui);
   threads.addThread(ui_thread); 
 
-  //
-  //Print delay_effekts
-  std::vector<audioDevice *> delay_effekts;
-  engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delay_effekts);
-  for( auto device : delay_effekts){
-    sprintf(str_, "List of DelayEffkts: (%s)\n", device->getLabel(LABEL_LONG));
-    Serial.print(str_);
-  }
-
 }
 
 
