@@ -166,10 +166,17 @@ void AudioPatchControl::setDelayParam(uint8_t ch)
 
   std::vector<audioDevice *> device;
   p_engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device);
-  if(device.size() > ch){
-    device.at(0)->updateParam(0, ch, val);
+
+  //dry wet
+  if(ch == 5){
+    device.at(0)->updateParam(0, 3, val);
   }
 
+  else if(ch>=0 && ch<3)
+  {
+    device.at(0)->updateParam(0, ch, val);      
+  }
+ 
 }
 
 void AudioPatchControl::updatePeak(void)

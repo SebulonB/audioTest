@@ -116,11 +116,12 @@ class audioEffektDelay : public audioDevice
   protected:
     void updateTime(uint32_t id, float val);
     void updateFeedback(uint32_t id, float val);
+    void updateDryWet(uint32_t id, float val);
 
   private:
-   std::list<AudioEffectDelay *> m_delay;
-   std::list<AudioMixer4 *>      m_feedback_mix;
-   //std::list<AudioMixer4 *>      m_mix_out__drywet; -->m_mix_out
+   std::vector<AudioEffectDelay *> m_delay;
+   std::vector<AudioMixer4 *>      m_feedback_mix;
+   //std::vector<AudioMixer4 *>      m_mix_out__drywet; -->m_mix_out
 
 };
 

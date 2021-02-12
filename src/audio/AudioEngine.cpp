@@ -57,20 +57,34 @@ audioEngine::audioEngine()
   auto dac = m_devices.at(1); 
   
   //
-  // adc -> mix -> dac
+  // adc -> mix -> delay -> dac
   //
   // ch:0 left | ch:1 rigth
   //
   uint8_t adc_cnt = 0;
+  uint8_t delay_cnt = 0;
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
       mix->setInputStream(adc, adc_cnt, 0);
       mix->setInputStream(adc, adc_cnt, 1);
       adc_cnt++;
+    
+      if(delay_cnt<3){
+        std::vector<audioDevice *> device;
+        getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device);
+        device.at(delay_cnt)->setInputStream(mix, 0, 0);
+        device.at(delay_cnt)->setInputStream(mix, 1, 1);
 
-      dac->setInputStream(mix, 0, 0 );
-      dac->setInputStream(mix, 1, 1 ); 
+        dac->setInputStream(device.at(delay_cnt), 0, 0 );
+        dac->setInputStream(device.at(delay_cnt), 1, 1 );        
+        delay_cnt++; 
+      }
+      else
+      {
+        dac->setInputStream(mix, 0, 0 );
+        dac->setInputStream(mix, 1, 1 );         
+      }
     }
   }
 

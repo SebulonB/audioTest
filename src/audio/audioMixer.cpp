@@ -71,7 +71,6 @@ AudioStream *audioMixer::getOutputStream(uint8_t audio_ch)
 
 void audioMixer::updateVolume(uint32_t id, float val)
 {
-
   //0:left | 1:right
   if(m_mix_in.size() == 2){
 
@@ -91,7 +90,7 @@ void audioMixer::updateVolume(uint32_t id, float val)
   }
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
-  printCallbackUpdate(val);
+  printCallbackUpdate(val, "volume/pan");
 #endif  
 }
 

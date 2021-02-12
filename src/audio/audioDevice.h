@@ -3,6 +3,8 @@
 #include <list>
 #include <vector>
 #include <functional>
+#include <iterator> 
+#include <string>
 
 #include <Audio.h>
 #include <Wire.h>
@@ -242,31 +244,44 @@ class audioDevice
 
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
     {
-      if(pin == NULL) {return -1;}
-
+      if(pin == NULL) {
+#ifdef DEBUG_AUDIO_DEVICE 
+        sprintf( str_, "setInputCord: no audio device handed over\n");
+        Serial.print(str_);
+#endif
+        return -1;
+      }
       AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
-      if(stream_in == NULL) {return -1;}
+      int cord_c = 0xff; 
 
       if(    audio_ch_in < m_mix_in.size() 
           && audio_ch_in < m_mix_in_connections.size() )
       {
-        int cord_c = m_mix_in_connections.at(audio_ch_in);
-        if( cord_c >= m_mix_in_max_connections)          {return -1;}
-
-        m_cords.push_back(new AudioConnection( *stream_in, 0,
-                                               *m_mix_in.at(audio_ch_in), cord_c ));
-        
-        m_mix_in_connections.at(audio_ch_in) += 1;
+        cord_c = m_mix_in_connections.at(audio_ch_in);
+        if( cord_c < m_mix_in_max_connections)
+        {
+          m_cords.push_back(new AudioConnection( *stream_in, 0,
+                                                 *m_mix_in.at(audio_ch_in), cord_c ));
+          
+          m_mix_in_connections.at(audio_ch_in) += 1;
 
 #ifdef DEBUG_AUDIO_DEVICE 
-        sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s ch(%d) \n",
-                        pin->getLabel(LABEL_SHORT), audio_ch_out, 
-                        getLabel(LABEL_SHORT), audio_ch_in);
+          sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s ch(%d) \n",
+                          pin->getLabel(LABEL_SHORT), audio_ch_out, 
+                          getLabel(LABEL_SHORT), audio_ch_in);
+          Serial.print(str_);
+#endif
+          return 0;
+        }
+      }
+#ifdef DEBUG_AUDIO_DEVICE 
+        sprintf( str_, "setInputCord: could not create ( %s -> %s ) audioch(%d|%d|%d) cord(%d|%d) \n", 
+                         pin->getLabel(LABEL_SHORT), getLabel(LABEL_SHORT), 
+                         audio_ch_in, m_mix_in.size(), m_mix_in_connections.size(),
+                         cord_c, m_mix_in_max_connections);
         Serial.print(str_);
 #endif
-      }
-
-      return 0;
+      return -1;
     }
 
     virtual AudioStream *getOutputStream(uint8_t audio_ch);  
@@ -279,11 +294,11 @@ class audioDevice
     } 
 
 #if defined(DEBUG_AUDIO_DEVICE)
-    void printCallbackUpdate(float val){
+    void printCallbackUpdate(float val, std::string s){
       if(m_used_param != NULL){
-        sprintf(str_, "CB Updated: %6s  %6s ( %1.3f | %3.3f)\n",   m_label_long, 
-                                                                            m_used_param->getLabel(LABEL_LONG),
-                                                                            val, m_used_param->getValueScaled() );
+        sprintf(str_, "CB Updated( %s ): %6s  %6s ( %1.3f | %3.3f)\n",  s.c_str(), m_label_long, 
+                                                                       m_used_param->getLabel(LABEL_LONG),
+                                                                       val, m_used_param->getValueScaled() );
         Serial.print(str_);
       }
     }
@@ -312,6 +327,8 @@ class audioDevice
     std::vector<AudioConnection*> m_cords;
 
     const int m_max_channels{2}; //0:left / 1:rigth
+
+    audioDeviceParam * usedParam() {return m_used_param;}
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE
