@@ -13,8 +13,7 @@
 
 
 
-
-
+#define DEBUG_AUDIO_MIXER
 
 
 audioMixer::audioMixer( audioDeviceIdGenerator *idgen, 
@@ -54,7 +53,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
     m_mix_in_connections.push_back(0);
   }
 
-#ifdef DEBUG_AUDIO_DEVICE 
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   sprintf(str_, "created mixer: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
   Serial.print(str_);
 #endif    
@@ -91,12 +90,13 @@ void audioMixer::updateVolume(uint32_t id, float val)
     }    
   }
 
-#ifdef DEBUG_AUDIO_DEVICE 
-  if(m_used_param == NULL){return;}  
-  sprintf(str_, "mixer updated:  %8s  %8s value( %1.3f | %3.3f)\n",   m_label_long, 
-                                                                      m_used_param->getLabel(LABEL_LONG),
-                                                                      val, m_used_param->getValueScaled() );
-  Serial.print(str_);
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
+  if(m_used_param != NULL){
+    sprintf(str_, "mixer updated:  %8s  %8s value( %1.3f | %3.3f)\n",   m_label_long, 
+                                                                        m_used_param->getLabel(LABEL_LONG),
+                                                                        val, m_used_param->getValueScaled() );
+    Serial.print(str_);
+  }
 #endif  
 }
 
