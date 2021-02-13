@@ -148,20 +148,23 @@ void AudioPatchControl::setReverbParam(uint8_t ch)
       
 }
 
-void AudioPatchControl::setDelayParam(uint8_t ch)
+void AudioPatchControl::setDelayParam(enum UserInterface::DIAL_PAGE page, uint8_t ch)
 {
 
   if(ch>=6){return;}
   if(p_ui == NULL){return;}
 
-  float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_EFFECT_DELAY,ch);
-
+  float val = p_ui->getDialVal(page,ch);
+  uint8_t p = (uint8_t)page - (uint8_t)UserInterface::DIAL_PAGE_EFFECT_DELAY;//count from 0
+ 
   if(m_debug){
     Serial.print("DelayParam: ");
     Serial.print(ch);
     Serial.print(" | ");
+    Serial.print(p);
+    Serial.print(" | ");  
     Serial.print(val);     
-    Serial.print("\n");  
+    Serial.print("\n"); 
   }
 
   std::vector<audioDevice *> device;
@@ -169,12 +172,16 @@ void AudioPatchControl::setDelayParam(uint8_t ch)
 
   //dry wet
   if(ch == 5){
-    device.at(0)->updateParam(0, 3, val);
+    if(p<device.size()){
+      device.at(p)->updateParam(0, 3, val);
+    }
   }
 
   else if(ch>=0 && ch<3)
   {
-    device.at(0)->updateParam(0, ch, val);      
+    if(p<device.size()){    
+      device.at(p)->updateParam(0, ch, val);   
+    }   
   }
  
 }

@@ -58,10 +58,12 @@ char *delay_params[KNOB_CNT] = {
 };
 
 char *send_str_list[KNOB_CNT] = {
+  
+  "delay1",
+  "delay2",
+  "delay3",
+
   "reverb",
-  "delay",
-  "...",
-  "...",
   "...",  
   "..."  
 };
@@ -146,7 +148,13 @@ UserInterface::UserInterface()
     }
     else if(i == DIAL_PAGE_EFFECT_DELAY){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    }
+    else if(i == DIAL_PAGE_EFFECT_DELAY2){
+      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
     }    
+    else if(i == DIAL_PAGE_EFFECT_DELAY3){
+      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    }                
     else{
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, sting_list, 0.0); 
     }
@@ -383,8 +391,8 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page EFFECT | "); 
       Serial.print(m_page_sub);
       Serial.print("\n");
-      if(m_page_sub>=2){m_page_sub = 0;}      
-      dial = (uint8_t)DIAL_PAGE_EFFECT_REVERB + m_page_sub;   
+      if(m_page_sub>3){m_page_sub = 3;}      
+      dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;   
       p_dial_pages[dial]->setActive(true);
       p_dial_pages[dial]->drawInfo(send_str_list[m_page_sub]);               
       p_dial_pages[dial]->drawAllChannels();

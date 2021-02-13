@@ -50,6 +50,9 @@ void setup(void) {
 
 
 void loop() {
+
+  uint8_t s = 0;
+  uint8_t e = 0;
   
   //update bar with peak value
   if(ui->getFaderActive(0))
@@ -85,8 +88,8 @@ void loop() {
   }  
 
   //check send 
-  uint8_t s = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH1);
-  uint8_t e = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH6);
+  s = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH1);
+  e = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH6);
   for(int i=0; i<6;i++){
     for(int y=s; y<=e;y++){
       if(    ui->getDialUpdated((enum UserInterface::DIAL_PAGE)y,i)
@@ -106,12 +109,16 @@ void loop() {
     }
   } 
 
+  s = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY);
+  e = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY3);
   //check Delay Param
   for(int i=0; i<6;i++){
-    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_DELAY,i)
-        && ui->getDialActive(UserInterface::DIAL_PAGE_EFFECT_DELAY, i))
-    {
-      apc->setDelayParam(i);
+    for(int y=s; y<=e;y++){
+      if(    ui->getDialUpdated((enum UserInterface::DIAL_PAGE)y,i)
+          && ui->getDialActive((enum UserInterface::DIAL_PAGE)y,i))
+      {
+        apc->setDelayParam((enum UserInterface::DIAL_PAGE)y, i);
+      }
     }
   } 
     

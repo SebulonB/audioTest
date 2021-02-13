@@ -16,7 +16,7 @@ class AudioPatchControl
     void setHighPass(uint8_t ch);
     void setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_t ch);
     void setReverbParam(uint8_t ch);
-    void setDelayParam(uint8_t ch); 
+    void setDelayParam(enum UserInterface::DIAL_PAGE page, uint8_t ch); 
 
     void updatePeak(void);
 

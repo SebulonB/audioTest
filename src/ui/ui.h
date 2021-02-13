@@ -46,8 +46,10 @@ class UserInterface
       DIAL_PAGE_SEND_CH6,            
       
       //Effects
-      DIAL_PAGE_EFFECT_REVERB,
       DIAL_PAGE_EFFECT_DELAY,
+      DIAL_PAGE_EFFECT_DELAY2,
+      DIAL_PAGE_EFFECT_DELAY3,            
+      DIAL_PAGE_EFFECT_REVERB,
 
       DIAL_PAGE_NUM,
     };

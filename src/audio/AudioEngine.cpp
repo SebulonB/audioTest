@@ -8,6 +8,9 @@
 #include "audioDevice.h"
 #include "audioEffekt.h"
 
+const char ae_mhelp_label1[]  PROGMEM = "mhelp:1";
+const char ae_mhelp_label2[]  PROGMEM = "mhelp:2";
+
 
 
 audioEngine::audioEngine()
@@ -17,10 +20,12 @@ audioEngine::audioEngine()
   idgen = new audioDeviceIdGenerator();
 
   //Audio Input
-  m_devices.push_back( new audioADC( idgen, AUDIO_ADC_I2S_HEX ) );
+  auto adc = new audioADC( idgen, AUDIO_ADC_I2S_HEX );
+  m_devices.push_back( adc );
 
   //Audio Output
-  m_devices.push_back( new audioDAC( idgen, AUDIO_DAC_I2S ) ); 
+  auto dac = new audioDAC( idgen, AUDIO_DAC_I2S ); 
+  m_devices.push_back( dac ); 
 
   //Four Input Mixers
   m_devices.push_back( new audioMixer( idgen, 
@@ -39,6 +44,15 @@ audioEngine::audioEngine()
                                        aef_mixer4_label_short,
                                        aef_mixer4_label_long ) );   
 
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer5_label_short,
+                                       aef_mixer5_label_long ) );
+
+  m_devices.push_back( new audioMixer( idgen, 
+                                       aef_mixer6_label_short,
+                                       aef_mixer6_label_long ) );   
+
+
   //create delay Effekts
   m_devices.push_back( new audioEffektDelay( idgen, 
                                              aef_delay1_label_short, 
@@ -53,8 +67,8 @@ audioEngine::audioEngine()
                                              aef_delay3_label_long) );  
 
   //connect
-  auto adc = m_devices.at(0); 
-  auto dac = m_devices.at(1); 
+  //auto adc = m_devices.at(0); 
+   m_devices.at(1); 
   
   //
   // adc -> mix -> delay -> dac
@@ -63,12 +77,15 @@ audioEngine::audioEngine()
   //
   uint8_t adc_cnt = 0;
   uint8_t delay_cnt = 0;
+  std::vector<audioDevice *> mix_helpers;
+  audioDevice* mhelp = new audioMixer( idgen, ae_mhelp_label1, ae_mhelp_label1 ); 
+
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
       mix->setInputStream(adc, adc_cnt, 0);
       mix->setInputStream(adc, adc_cnt, 1);
-      adc_cnt++;
+
     
       if(delay_cnt<3){
         std::vector<audioDevice *> device;
@@ -76,17 +93,30 @@ audioEngine::audioEngine()
         device.at(delay_cnt)->setInputStream(mix, 0, 0);
         device.at(delay_cnt)->setInputStream(mix, 1, 1);
 
-        dac->setInputStream(device.at(delay_cnt), 0, 0 );
-        dac->setInputStream(device.at(delay_cnt), 1, 1 );        
+        mhelp->setInputStream(device.at(delay_cnt), 0, 0 );
+        mhelp->setInputStream(device.at(delay_cnt), 1, 1 );        
         delay_cnt++; 
       }
       else
       {
-        dac->setInputStream(mix, 0, 0 );
-        dac->setInputStream(mix, 1, 1 );         
+        mhelp->setInputStream(mix, 0, 0 );
+        mhelp->setInputStream(mix, 1, 1 );         
+      }
+
+      if(adc_cnt++ == 2){
+        mix_helpers.push_back(mhelp);
+        mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 ); 
       }
     }
   }
+  mix_helpers.push_back(mhelp);
+
+  for(unsigned x=0; x<mix_helpers.size(); x++){
+    dac->setInputStream(mix_helpers.at(x), 0, 0);
+    dac->setInputStream(mix_helpers.at(x), 1, 1);      
+  }
+  
+
 
 #ifdef AUDIO_ENGINE_DEBUG
   sprintf(str_, "Audio Engine Init: devices(%d)\n", m_devices.size());
