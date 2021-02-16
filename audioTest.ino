@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+//#include <fstream>
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library for ST7735
@@ -10,10 +11,13 @@
 #include <SD.h>
 #include <SPI.h>
 #include <SerialFlash.h>
+#include "src/tomlcpp/tomlcpp.hpp"
+#include "src/patches/pDelay.h"
 
 #include <Audio.h>
 #include <Wire.h>
 #include <Bounce.h>
+
 
 #include "src/ui/widgets.h"
 #include "src/ui/ui.h"
@@ -28,6 +32,34 @@ AudioPatchControl *apc=NULL;
 
 char str_[100];
 
+
+void parseTOML(void)
+{
+ 
+  auto res = toml::parse(patch_str_dlay1);
+  if (!res.table) {
+    Serial.print("cannot parse str\n");
+    return;
+  }
+
+  auto delay_s = res.table->getTable("delay");  
+  if (!delay_s){
+    Serial.print("missing [delay]");
+    return;
+  }
+
+  auto flow = delay_s->getDouble("flow");
+  if(!flow.first){
+    Serial.print("missing flow");
+    return;    
+  }
+
+  Serial.print("flow= ");
+  Serial.print(flow.second);
+  Serial.print("\n");
+
+}
+
 //
 // Teensy Libs: Teensyduino/Contents/Java/hardware/teensy/avr
 
@@ -38,6 +70,10 @@ void setup(void) {
   Serial.begin(9600);
 
   delay(1000);
+
+  parseTOML();
+
+
   ui     = new UserInterface();
   engine = new audioEngine();
   apc    = new AudioPatchControl(ui, engine);

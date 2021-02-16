@@ -76,37 +76,66 @@ audioEngine::audioEngine()
   // ch:0 left | ch:1 rigth
   //
   uint8_t adc_cnt = 0;
-  uint8_t delay_cnt = 0;
+  uint8_t mix_cnt = 0;
   std::vector<audioDevice *> mix_helpers;
   audioDevice* mhelp = new audioMixer( idgen, ae_mhelp_label1, ae_mhelp_label1 ); 
+
+  std::vector<audioDevice *> delays;
+  getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delays);
 
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
-      mix->setInputStream(adc, adc_cnt, 0);
-      mix->setInputStream(adc, adc_cnt, 1);
+      mix->setInputStream(adc, mix_cnt, 0);
+      mix->setInputStream(adc, mix_cnt, 1);
 
     
-      if(delay_cnt<3){
-        std::vector<audioDevice *> device;
-        getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device);
-        device.at(delay_cnt)->setInputStream(mix, 0, 0);
-        device.at(delay_cnt)->setInputStream(mix, 1, 1);
-
-        mhelp->setInputStream(device.at(delay_cnt), 0, 0 );
-        mhelp->setInputStream(device.at(delay_cnt), 1, 1 );        
-        delay_cnt++; 
-      }
-      else
+      //
+      // Mix[0] -----> delay[0]
+      // Mix[1] --|
+      //
+      if(mix_cnt==0 || mix_cnt==1) 
       {
-        mhelp->setInputStream(mix, 0, 0 );
-        mhelp->setInputStream(mix, 1, 1 );         
+        delays.at(0)->setInputStream(mix, 0, 0);
+        delays.at(0)->setInputStream(mix, 1, 1);
+        mhelp->setInputStream(delays.at(0), 0, 0 );
+        mhelp->setInputStream(delays.at(0), 1, 1 );     
+         
+      }
+      //
+      // Mix[2] -----> delay[1]
+      // Mix[3]--| 
+      //   
+      else if(mix_cnt == 2 || mix_cnt == 3){
+        delays.at(1)->setInputStream(mix, 0, 0);
+        delays.at(1)->setInputStream(mix, 1, 1);
+        
+
+          mhelp->setInputStream(delays.at(1), 0, 0 );
+          mhelp->setInputStream(delays.at(1), 1, 1 );     
+
+
+         
+      }
+      //
+      // Mix[4] -----> delay[2]
+      // Mix[5]--|
+      //          
+      else if(mix_cnt == 4 || mix_cnt == 5){
+        delays.at(2)->setInputStream(mix, 0, 0);
+        delays.at(2)->setInputStream(mix, 1, 1);
+
+          mhelp->setInputStream(delays.at(2), 0, 0 );
+          mhelp->setInputStream(delays.at(2), 1, 1 );   
+         
+      } 
+
+      if(mix_cnt == 2){
+        mix_helpers.push_back(mhelp);
+        mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 );   
       }
 
-      if(adc_cnt++ == 2){
-        mix_helpers.push_back(mhelp);
-        mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 ); 
-      }
+      mix_cnt++;
     }
   }
   mix_helpers.push_back(mhelp);

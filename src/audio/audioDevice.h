@@ -10,7 +10,7 @@
 #include <Wire.h>
 
 
-#define DEBUG_AUDIO_DEVICE
+//#define DEBUG_AUDIO_DEVICE
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 

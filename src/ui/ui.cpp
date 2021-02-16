@@ -391,7 +391,7 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page EFFECT | "); 
       Serial.print(m_page_sub);
       Serial.print("\n");
-      if(m_page_sub>3){m_page_sub = 3;}      
+      if(m_page_sub>3){m_page_sub = 0;}      
       dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;   
       p_dial_pages[dial]->setActive(true);
       p_dial_pages[dial]->drawInfo(send_str_list[m_page_sub]);               
