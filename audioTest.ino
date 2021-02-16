@@ -11,8 +11,9 @@
 #include <SD.h>
 #include <SPI.h>
 #include <SerialFlash.h>
-#include "src/toml/tomlcpp.hpp"
-#include "src/patches/inc/patches.h"
+//#include "src/toml/tomlcpp.hpp"
+//#include "src/patches/inc/patches.h"
+#include "src/patches/handler/handler.h"
 
 #include <Audio.h>
 #include <Wire.h>
@@ -28,37 +29,9 @@
 
 UserInterface     *ui=NULL;  
 audioEngine       *engine=NULL;
-AudioPatchControl *apc=NULL;   
+AudioPatchControl *apc=NULL;  
+patchHandler      *ipatches=NULL; 
 
-char str_[100];
-
-
-void parseTOML()
-{
- 
-  auto res = toml::parse(patch_str_raumLauf);
-  if (!res.table) {
-    Serial.print("cannot parse str\n");
-    return;
-  }
-
-  auto delay_s = res.table->getTable("delay");  
-  if (!delay_s){
-    Serial.print("missing [delay]");
-    return;
-  }
-
-  auto flow = delay_s->getDouble("flow");
-  if(!flow.first){
-    Serial.print("missing flow");
-    return;    
-  }
-
-  Serial.print("flow= ");
-  Serial.print(flow.second);
-  Serial.print("\n");
-
-}
 
 //
 // Teensy Libs: Teensyduino/Contents/Java/hardware/teensy/avr
@@ -71,17 +44,15 @@ void setup(void) {
 
   delay(1000);
 
-  parseTOML();
-
-
   ui     = new UserInterface();
   engine = new audioEngine();
   apc    = new AudioPatchControl(ui, engine);
-  
+  ipatches = new patchHandler();
 
+  engine->setPatchInterface(ipatches);
+  
   init_ui(ui);
   threads.addThread(ui_thread); 
-
 }
 
 

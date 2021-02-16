@@ -9,8 +9,9 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "../patches/handler/handler.h"
 
-//#define DEBUG_AUDIO_DEVICE
+#define DEBUG_AUDIO_DEVICE
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
@@ -190,6 +191,21 @@ class audioDevice
     
     uint32_t getId(){return m_id;}
 
+    //should be used after init of m_devices
+    void setPatchInterface(patchHandler *ip){
+      ipatches = ip;
+    }    
+
+    void updateFromPatchInterface(void){
+      if(ipatches==NULL){return;}
+      for(auto param : m_params){
+        float val;
+        if(ipatches->getParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_LONG), val)){
+          param->setValue(val);
+        }    
+      }
+    }
+
     const char * getLabel(enum LABEL_TYPE type)
     {
 
@@ -309,6 +325,8 @@ class audioDevice
     const char *m_label_short{NULL};   
 
     uint32_t m_id{0}; 
+
+    patchHandler *ipatches{NULL};
 
 
     //Params
