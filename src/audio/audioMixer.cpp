@@ -71,6 +71,7 @@ AudioStream *audioMixer::getOutputStream(uint8_t audio_ch)
 
 void audioMixer::updateVolume(uint32_t id, float val)
 {
+
   //0:left | 1:right
   if(m_mix_in.size() == 2){
 

@@ -46,9 +46,9 @@ void setup(void) {
   ipatches = new patchHandler();
 
   engine->setPatchInterface(ipatches);
-  //engine->updateFromPatchInterfaced();  
+
   
-  init_ui(ui);
+  init_ui(ui);  
   threads.addThread(ui_thread); 
 }
 

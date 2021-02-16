@@ -12,6 +12,8 @@
 #include "../patches/handler/handler.h"
 
 #define DEBUG_AUDIO_DEVICE
+//#define DEBUG_AUDIO_DEVICE_CORDS
+#define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
@@ -155,10 +157,8 @@ class audioDeviceParam
         if( scaled >= m_val_min && scaled <= m_val_max )
         {
           m_value = val;          
-          m_value_scaled = scaled;
-          Serial.print("param update->");        
-          if(update_callback != NULL){    
-            Serial.print("cb->");     
+          m_value_scaled = scaled;       
+          if(update_callback != NULL){      
             update_callback(m_id, val);
           }
         }
@@ -202,9 +202,9 @@ class audioDevice
       for(auto param : m_params){
         float val;
         if(ipatches->getParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_SHORT), val)){
-          sprintf(str_, "set Param: %s %1.2f\n", param->getLabel(LABEL_SHORT), val);
-          Serial.print(str_);
+          m_used_param = param;
           param->setValue(val);
+          m_used_param = NULL;
         }    
       }
     }
@@ -264,7 +264,7 @@ class audioDevice
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
     {
       if(pin == NULL) {
-#ifdef DEBUG_AUDIO_DEVICE 
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
         sprintf( str_, "setInputCord: no audio device handed over\n");
         Serial.print(str_);
 #endif
@@ -284,7 +284,7 @@ class audioDevice
           
           m_mix_in_connections.at(audio_ch_in) += 1;
 
-#ifdef DEBUG_AUDIO_DEVICE 
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
           sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s ch(%d) \n",
                           pin->getLabel(LABEL_SHORT), audio_ch_out, 
                           getLabel(LABEL_SHORT), audio_ch_in);
@@ -293,7 +293,8 @@ class audioDevice
           return 0;
         }
       }
-#ifdef DEBUG_AUDIO_DEVICE 
+
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
         sprintf( str_, "setInputCord: could not create ( %s -> %s ) audioch(%d|%d|%d) cord(%d|%d) \n", 
                          pin->getLabel(LABEL_SHORT), getLabel(LABEL_SHORT), 
                          audio_ch_in, m_mix_in.size(), m_mix_in_connections.size(),
@@ -312,10 +313,10 @@ class audioDevice
       return 0;
     } 
 
-#if defined(DEBUG_AUDIO_DEVICE)
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CALLBACK)
     void printCallbackUpdate(float val, std::string s){
       if(m_used_param != NULL){
-        sprintf(str_, "CB Updated( %s ): %6s  %6s ( %1.3f | %3.3f)\n",  s.c_str(), m_label_long, 
+        sprintf(str_, "CB Updated( %-10s ): %6s  %6s ( %1.3f | %3.3f)\n",  s.c_str(), m_label_long, 
                                                                        m_used_param->getLabel(LABEL_LONG),
                                                                        val, m_used_param->getValueScaled() );
         Serial.print(str_);
