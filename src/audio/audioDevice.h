@@ -151,13 +151,14 @@ class audioDeviceParam
     void  setValue(float val){  
       if(val >= -1.0 && val <= 1.0)
       {
-        
-        m_value = val;
         float scaled = m_val_min + (m_val_max - m_val_min)*val;
         if( scaled >= m_val_min && scaled <= m_val_max )
         {
+          m_value = val;          
           m_value_scaled = scaled;
+          Serial.print("param update->");        
           if(update_callback != NULL){    
+            Serial.print("cb->");     
             update_callback(m_id, val);
           }
         }
@@ -200,7 +201,9 @@ class audioDevice
       if(ipatches==NULL){return;}
       for(auto param : m_params){
         float val;
-        if(ipatches->getParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_LONG), val)){
+        if(ipatches->getParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_SHORT), val)){
+          sprintf(str_, "set Param: %s %1.2f\n", param->getLabel(LABEL_SHORT), val);
+          Serial.print(str_);
           param->setValue(val);
         }    
       }

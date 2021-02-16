@@ -16,7 +16,6 @@
 #include <Wire.h>
 #include <Bounce.h>
 
-
 #include "src/ui/widgets.h"
 #include "src/ui/ui.h"
 #include "src/audio/audioEngine.h"
@@ -29,7 +28,6 @@ UserInterface     *ui=NULL;
 audioEngine       *engine=NULL;
 AudioPatchControl *apc=NULL;  
 patchHandler      *ipatches=NULL; 
-
 
 //
 // Teensy Libs: Teensyduino/Contents/Java/hardware/teensy/avr
@@ -48,6 +46,7 @@ void setup(void) {
   ipatches = new patchHandler();
 
   engine->setPatchInterface(ipatches);
+  //engine->updateFromPatchInterfaced();  
   
   init_ui(ui);
   threads.addThread(ui_thread); 

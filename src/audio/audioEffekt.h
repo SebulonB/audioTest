@@ -70,18 +70,18 @@ class audioDAC : public audioDevice
 // Main Input Mixer Channel
 // Mixer with Pan and Mute input
 //
-const char aef_mixer1_label_short[] PROGMEM = "mix:1";
-const char aef_mixer1_label_long[]  PROGMEM = "mixer:1";
-const char aef_mixer2_label_short[] PROGMEM = "mix:2";
-const char aef_mixer2_label_long[]  PROGMEM = "mixer:2";
-const char aef_mixer3_label_short[] PROGMEM = "mix:3";
-const char aef_mixer3_label_long[]  PROGMEM = "mixer:3";
-const char aef_mixer4_label_short[] PROGMEM = "mix:4";
-const char aef_mixer4_label_long[]  PROGMEM = "mixer:4";
-const char aef_mixer5_label_short[] PROGMEM = "mix:5";
-const char aef_mixer5_label_long[]  PROGMEM = "mixer:5";
-const char aef_mixer6_label_short[] PROGMEM = "mix:6";
-const char aef_mixer6_label_long[]  PROGMEM = "mixer:6";
+const char aef_mixer1_label_short[] PROGMEM = "mix_1";
+const char aef_mixer1_label_long[]  PROGMEM = "mixer_1";
+const char aef_mixer2_label_short[] PROGMEM = "mix_2";
+const char aef_mixer2_label_long[]  PROGMEM = "mixer_2";
+const char aef_mixer3_label_short[] PROGMEM = "mix_3";
+const char aef_mixer3_label_long[]  PROGMEM = "mixer_3";
+const char aef_mixer4_label_short[] PROGMEM = "mix)4";
+const char aef_mixer4_label_long[]  PROGMEM = "mixer_4";
+const char aef_mixer5_label_short[] PROGMEM = "mix_5";
+const char aef_mixer5_label_long[]  PROGMEM = "mixer_5";
+const char aef_mixer6_label_short[] PROGMEM = "mix_6";
+const char aef_mixer6_label_long[]  PROGMEM = "mixer_6";
 
 class audioMixer : public audioDevice
 {
@@ -102,12 +102,12 @@ class audioMixer : public audioDevice
 //
 // Ping Pong Delay
 //
-const char aef_delay1_label_short[] PROGMEM = "dlay:1";
-const char aef_delay1_label_long[]  PROGMEM = "delay:1";
-const char aef_delay2_label_short[] PROGMEM = "dlay:2";
-const char aef_delay2_label_long[]  PROGMEM = "delay:2";
-const char aef_delay3_label_short[] PROGMEM = "dlay:3";
-const char aef_delay3_label_long[]  PROGMEM = "delay:3";
+const char aef_delay1_label_short[] PROGMEM = "dlay_1";
+const char aef_delay1_label_long[]  PROGMEM = "delay_1";
+const char aef_delay2_label_short[] PROGMEM = "dlay_2";
+const char aef_delay2_label_long[]  PROGMEM = "delay_2";
+const char aef_delay3_label_short[] PROGMEM = "dlay_3";
+const char aef_delay3_label_long[]  PROGMEM = "delay_3";
 
 class audioEffektDelay : public audioDevice
 {

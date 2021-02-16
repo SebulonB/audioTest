@@ -1,0 +1,60 @@
+[delay_1]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1
+
+[delay_2]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1
+
+[delay_3]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1 
+
+[delay_4]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1 
+
+[delay_5]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1
+
+[delay_6]
+  left  = 0.44
+  right = 0.1
+  room  = 0.4
+  wet   = 0.1     
+
+[mixer_1] 
+  vol= 0.354   
+  pan= 0.0  
+
+[mixer_2] 
+  vol= 0.54   
+  pan= 0.0
+
+[mixer_3] 
+  vol= 0.54   
+  pan= 0.0 
+
+[mixer_4] 
+  vol= 0.4   
+  pan= 0.0 
+
+[mixer_5] 
+  vol= 0.54   
+  pan= 0.6 
+
+[mixer_6]
+  vol= 0.84 
+  pan= 0.0   
+

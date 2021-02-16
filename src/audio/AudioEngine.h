@@ -23,13 +23,23 @@ class audioEngine
     void updateParam(uint32_t device_id, uint32_t param_id, float val);
     void getDeviceList(enum ID_TYPE type, std::vector<audioDevice *> &v_device);
 
+
+    void updateFromPatchInterface(void){
+      if(ipatches==NULL){return;}
+      for(auto device : m_devices){
+        device->updateFromPatchInterface();  
+      }
+    }  
     //should be used after init of m_devices
     void setPatchInterface(patchHandler *ip){
       ipatches = ip;
       for (auto device : m_devices){
         device->setPatchInterface(ipatches);
+        device->updateFromPatchInterface(); 
       }
     }
+
+
 
   private:
     //use std::map?
