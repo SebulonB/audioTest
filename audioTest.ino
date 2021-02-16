@@ -11,8 +11,8 @@
 #include <SD.h>
 #include <SPI.h>
 #include <SerialFlash.h>
-#include "src/tomlcpp/tomlcpp.hpp"
-#include "src/patches/pDelay.h"
+#include "src/toml/tomlcpp.hpp"
+#include "src/patches/inc/patches.h"
 
 #include <Audio.h>
 #include <Wire.h>
@@ -33,10 +33,10 @@ AudioPatchControl *apc=NULL;
 char str_[100];
 
 
-void parseTOML(void)
+void parseTOML()
 {
  
-  auto res = toml::parse(patch_str_dlay1);
+  auto res = toml::parse(patch_str_raumLauf);
   if (!res.table) {
     Serial.print("cannot parse str\n");
     return;
