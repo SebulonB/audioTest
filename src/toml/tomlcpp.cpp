@@ -28,7 +28,7 @@
 #include <vector>
 #include <string.h>
 #include <fstream>
-#include "tomlcpp.hpp"
+#include "tomlcpp.h"
 #include "toml.h"
 
 using namespace toml;

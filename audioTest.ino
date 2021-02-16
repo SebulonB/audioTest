@@ -11,9 +11,6 @@
 #include <SD.h>
 #include <SPI.h>
 #include <SerialFlash.h>
-//#include "src/toml/tomlcpp.hpp"
-//#include "src/patches/inc/patches.h"
-#include "src/patches/handler/handler.h"
 
 #include <Audio.h>
 #include <Wire.h>
@@ -23,6 +20,7 @@
 #include "src/ui/widgets.h"
 #include "src/ui/ui.h"
 #include "src/audio/audioEngine.h"
+#include "src/patches/handler/handler.h"
 #include "audioPatchControl.h"
 
 #define SerialDebugging true

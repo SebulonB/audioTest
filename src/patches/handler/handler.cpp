@@ -1,12 +1,21 @@
 #include <string.h>
 
+#include <SD.h>
+#include <SPI.h>
+#include <SerialFlash.h>
+
+#include <Audio.h>
+#include <Wire.h>
+#include <Bounce.h>
+
 #include "handler.h"
-//#include "../toml/tomlcpp.hpp"
+// #include "../../toml/tomlcpp.h"
+// #include "../../patches/inc/patches.h"
 
 patchHandler::patchHandler(){
-// #ifdef DEBUG_PATCH_HANDLER
-//   Serial.print("patchHandler Init\n");
-// #endif
+#ifdef DEBUG_PATCH_HANDLER
+  Serial.print("patchHandler Init\n");
+#endif
 }
 
 
