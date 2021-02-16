@@ -3,23 +3,29 @@
 clear
 echo "Generate Patches:"
 
+dir_inc="src/patches/inc/"
+dir_src="src/patches/"
+
 declare -a patch_list=("setting.toml")
 
 # Iterate the string array using for loop
 for val in ${patch_list[@]}; do
-  echo " > $val"
+  
+  # *.toml -> *.h
+  var_d=${val%?????}
+  var2=$var_d.h
+  echo " > $val"" | $var2"
 
   #generate char[] { } of *.toml file
-  xxd -i $val | sed 's/\([0-9a-f]\)$/\0, 0x00/' > "$val".h
+  xxd -i $dir_src$val | sed 's/\([0-9a-f]\)$/\0, 0x00/' > $dir_inc$var2
 
   #remove first line
-  tail -n +2 "$val".h > "$val.tmp" && mv "$val.tmp" "$val".h
+  tail -n +2 $dir_inc$var2 > "$val.tmp" && mv "$val.tmp" $dir_inc$var2
 
   #add cpp header defines "#ifndef"
-  echo -e "const char patch_str_"$val"[] PROGMEM =\n{\n$(cat "$val".h)" > "$val".h 
-  echo -e "#define "$val"_h_\n\n$(cat "$val".h)" > "$val".h 
-  echo -e "#ifndef "$val"_h_\n$(cat "$val".h)" > "$val".h 
-  echo "" >> "$val".h 
-  echo "#endif" >> "$val".h
+  echo -e "const char patch_str_"$var_d"[] PROGMEM =\n{\n$(cat $dir_inc$var2)" > $dir_inc$var2 
+  echo -e "#define patch_"$var_d"_h_\n\n$(cat $dir_inc$var2)" > $dir_inc$var2
+  echo -e "#ifndef patch_"$var_d"_h_\n$(cat $dir_inc$var2)" > $dir_inc$var2
+  echo "" >> $dir_inc$var2 
+  echo "#endif" >> $dir_inc$var2
 done
-
