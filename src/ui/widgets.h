@@ -50,6 +50,8 @@ class WidgetVolumeBars : public WidgetPage{
 
 
     void    setFaderVal(uint8_t ch, float val, bool draw);
+    void    setFaderVal(uint8_t ch, float val, bool draw, bool updated);
+
     float   getFaderVal(uint8_t ch);
     uint8_t getFaderVals(float *p_vals, uint8_t n);
     bool    faderUpdated(uint8_t ch);
@@ -113,6 +115,7 @@ class WidgetDialGroup : public WidgetPage{
     void    drawAllChannels(void);
     void    drawInfo(char *str);    
     void    setDialVal(uint8_t ch, float val, bool draw);
+    void    setDialVal(uint8_t ch, float val, bool draw, bool update);  
     float   getDialVal(uint8_t ch);
     uint8_t getDialVals(float *p_vals, uint8_t n);    
     bool    dialUpdated(uint8_t ch);
@@ -140,6 +143,7 @@ class WidgetDial {
     WidgetDial(Adafruit_ST7789 *tft, float xd, float yd, float size, char *label, float init_val);
     void  drawDial();
     void  setValue(float val, bool draw);
+    void  setValue(float val, bool draw, bool update);
     float getValue(){return m_value;}
     bool  getUpdated();
     void  drawUpdate(bool force);    

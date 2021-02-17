@@ -47,8 +47,7 @@ void setup(void) {
 
   engine->setPatchInterface(ipatches);
 
-  
-  init_ui(ui);  
+  init_ui(ui, engine, ipatches);  
   threads.addThread(ui_thread); 
 }
 

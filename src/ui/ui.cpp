@@ -13,7 +13,7 @@
 #include "ui.h"
 
 
-#define DEBUG_USAGE
+//#define DEBUG_USAGE
 //#define DEBUG_KNOB
 
 
@@ -120,11 +120,19 @@ void ui_thread(void)
   }
 }
 
-void init_ui(UserInterface *ui)
+void  init_ui(UserInterface *ui, audioEngine *en, patchHandler *patch)
 {
   if(ui == NULL){return;}
+  if(patch == NULL){return;} 
+  if(en == NULL){return;}
+
   p_ui = ui;
+  p_ui->setPatchInterface(patch);
+  p_ui->setAudioEngine(en);
   p_ui->init();
+
+
+
 }
 
 
@@ -306,6 +314,7 @@ void UserInterface::change_page(uint8_t p)
   Serial.print(p);
   Serial.print("\n");  
 #endif   
+        
 
   //submenu
   if(p<6) //knob dial button
@@ -338,12 +347,21 @@ void UserInterface::change_page(uint8_t p)
   float vals[KNOB_CNT]={0};  
   uint8_t dial = 0;//(uint8_t)DIAL_PAGE_PAN;      
   char str_[10];
+  int r=0;
+  std::vector<audioDevice *> device;
   
   switch(m_page){
 
     case PAGE_MAIN:
       Serial.print("page: FADER\n");
-      p_volume_bars->setActive(true);      
+      p_volume_bars->setActive(true);  
+ 
+      r=0;
+      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
+      for(auto mix : device){
+        p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
+      }  
+     
       p_volume_bars->drawAllChannels();
       p_volume_bars->drawUpdate(true); 
       p_volume_bars->getFaderVals(vals, KNOB_CNT);
@@ -354,6 +372,14 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page PAN\n"); 
       dial = (uint8_t)DIAL_PAGE_PAN;   
       p_dial_pages[dial]->setActive(true);
+
+      r=0;
+      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
+      for(auto mix : device){
+        p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
+      }  
+     
+
       p_dial_pages[dial]->drawInfo(page_list[dial]);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 

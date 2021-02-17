@@ -62,9 +62,12 @@ void WidgetVolumeBars::drawUpdate(bool force)
 }
 
 
-
-
 void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
+{
+  setFaderVal(ch, val, draw, true);
+}
+
+void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw, bool updated)
 {
   if(!getActive()){return;}
 
@@ -73,8 +76,11 @@ void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
   if(val < 0.0 || val > 1.0) {return;}
 
   fader_saved_val[ch]    = val;
-  fader_updated_get[ch]  = true;
   fader_updated_draw[ch] = true;
+  
+  if(updated){
+    fader_updated_get[ch]  = true;
+  }
 
   if(draw && getActive()){
     draw_fader(ch, val, false);  
@@ -368,13 +374,20 @@ void WidgetDialGroup::drawUpdate(bool force)
 
 void WidgetDialGroup::setDialVal(uint8_t ch, float val, bool draw)
 {
+  setDialVal(ch, val, draw, true);
+}
+
+void WidgetDialGroup::setDialVal(uint8_t ch, float val, bool draw, bool update)
+{
   if(!getActive()){return;}
 
   if(p_tft == NULL){return;}
   if(ch >= m_channel_cnt) {return;}
   
-  dial[ch]->setValue(val, draw);
+  dial[ch]->setValue(val, draw, true);
 }
+
+
 
 float WidgetDialGroup::getDialVal(uint8_t ch)
 {
@@ -449,15 +462,23 @@ void WidgetDial::drawDial()
   draw_label();
 }
 
+
+
 void WidgetDial::setValue(float val, bool draw)
+{
+  setValue(val, draw, true);
+}
+
+void WidgetDial::setValue(float val, bool draw, bool update)
 {
   if     (val < m_min){val = m_min;}
   else if(val > m_max){val = m_max;}
   //draw
   m_value = val;
   updated_draw = true;
-  updated_get  = true;
-  
+  if(update){
+    updated_get  = true;
+  }
   if(draw){
     draw_hand();
   }

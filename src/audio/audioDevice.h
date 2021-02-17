@@ -261,6 +261,18 @@ class audioDevice
       }
     }
 
+    float getParamValue(uint32_t id, uint8_t index){
+      if(index>=m_params.size())
+      {
+        //use id instead
+        return 0.;
+      }
+      else
+      {
+        return m_params.at(index)->getValue();
+      }      
+    }
+
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
     {
       if(pin == NULL) {
@@ -316,9 +328,10 @@ class audioDevice
 #if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CALLBACK)
     void printCallbackUpdate(float val, std::string s){
       if(m_used_param != NULL){
-        sprintf(str_, "CB Updated( %-10s ): %6s  %6s ( %1.3f | %3.3f)\n",  s.c_str(), m_label_long, 
-                                                                       m_used_param->getLabel(LABEL_LONG),
-                                                                       val, m_used_param->getValueScaled() );
+        sprintf(str_, "CB Updated( %-10s ): %6s  %6s ( %1.3f | %3.3f)\n", 
+                        s.c_str(), m_label_long, 
+                        m_used_param->getLabel(LABEL_LONG),
+                        val, m_used_param->getValueScaled() );
         Serial.print(str_);
       }
     }

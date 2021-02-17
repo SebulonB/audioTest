@@ -2,6 +2,8 @@
 #define UI_H_
 
 #include "widgets.h"
+#include "../patches/handler/handler.h"
+#include "../audio/AudioEngine.h"
 
 #define MAX_KNOB_NUMBER           6
 #define MAX_BUTTON_NUMBER         18
@@ -55,6 +57,8 @@ class UserInterface
     };
 
     void  init();
+    void  setPatchInterface(patchHandler *p){ipatches=p;}
+    void  setAudioEngine(audioEngine *p){p_engine=p;}
     void  updateBars(uint8_t ch, float val);
     float getFaderVal(uint8_t ch);
     bool  getFaderUpdated(uint8_t ch);
@@ -68,6 +72,9 @@ class UserInterface
 
   private:
     Adafruit_ST7789  *p_tft{NULL};
+    patchHandler *ipatches{NULL};
+    audioEngine  *p_engine{NULL};
+
     WidgetVolumeBars *p_volume_bars{NULL};
     WidgetDialGroup  *p_dial_pages[MAX_DIAL_PAGES]{NULL};
     WidgetDialGroup  *p_hp_dials{NULL};    
@@ -87,7 +94,7 @@ class UserInterface
 
 };
 
-void  init_ui(UserInterface *ui);
+void  init_ui(UserInterface *ui, audioEngine *en, patchHandler *patch);
 void  ui_thread(void);
 
 

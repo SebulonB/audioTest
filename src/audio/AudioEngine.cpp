@@ -167,7 +167,7 @@ void audioEngine::updateParam(uint32_t device_id, uint32_t param_id, float val)
 
 
 void audioEngine::getDeviceList(enum ID_TYPE type, std::vector<audioDevice *> &v_device)
-{
+{  
   for(auto device : m_devices){
     uint32_t id = device->getId();
     if(static_cast<enum ID_TYPE>(id>>16) == type){
