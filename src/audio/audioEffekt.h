@@ -108,6 +108,10 @@ const char aef_delay2_label_short[] PROGMEM = "dlay_2";
 const char aef_delay2_label_long[]  PROGMEM = "delay_2";
 const char aef_delay3_label_short[] PROGMEM = "dlay_3";
 const char aef_delay3_label_long[]  PROGMEM = "delay_3";
+const char aef_delay4_label_short[] PROGMEM = "dlay_4";
+const char aef_delay4_label_long[]  PROGMEM = "delay_4";
+const char aef_delay5_label_short[] PROGMEM = "dlay_5";
+const char aef_delay5_label_long[]  PROGMEM = "delay_5";
 
 class audioEffektDelay : public audioDevice
 {

@@ -1,8 +1,8 @@
-[delay_1]
-  left  = 0.44
+["delay_1"]
+  left  = 0.015
   right = 0.0
   room  = 0.15
-  wet   = 0.15
+  wet   = 1.0
 
 [delay_2]
   left  = 0.44
@@ -34,27 +34,27 @@
   room  = 0.4
   wet   = 0.1     
 
-[mixer_1] 
-  vol= 0.1  
-  pan= 0.1
+["mixer_1"] 
+  vol= 0.85  
+  pan= 0.0
 
 [mixer_2] 
-  vol= 0.2   
+  vol= 0.85  
   pan= 1.0
 
 [mixer_3] 
-  vol= 0.3   
+  vol= 0.4  
   pan= 0.3
 
 [mixer_4] 
-  vol= 0.4   
-  pan= 1.0 
+  vol= 0.0   
+  pan= 0.35 
 
 [mixer_5] 
-  vol= 0.5   
-  pan= 0.5 
+  vol= 0.0  
+  pan= 0.5
 
 [mixer_6]
-  vol= 0.6 
-  pan= 1.0   
+  vol= 0.1
+  pan= 0.75  
 

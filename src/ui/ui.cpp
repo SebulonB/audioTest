@@ -13,7 +13,7 @@
 #include "ui.h"
 
 
-//#define DEBUG_USAGE
+#define DEBUG_USAGE
 //#define DEBUG_KNOB
 
 
@@ -62,10 +62,10 @@ char *send_str_list[KNOB_CNT] = {
   "delay1",
   "delay2",
   "delay3",
+  "delay4",
+  "delay5", 
 
   "reverb",
-  "...",  
-  "..."  
 };
 
 char *sting_list[KNOB_CNT] = {
@@ -162,7 +162,13 @@ UserInterface::UserInterface()
     }    
     else if(i == DIAL_PAGE_EFFECT_DELAY3){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
-    }                
+    } 
+    else if(i == DIAL_PAGE_EFFECT_DELAY4){
+      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    }    
+    else if(i == DIAL_PAGE_EFFECT_DELAY5){
+      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    }                           
     else{
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, sting_list, 0.0); 
     }
@@ -432,7 +438,7 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page EFFECT | "); 
       Serial.print(m_page_sub);
       Serial.print("\n");
-      if(m_page_sub>3){m_page_sub = 0;}      
+      if(m_page_sub>6){m_page_sub = 0;}      
       dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;  
 
       p_engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device); 

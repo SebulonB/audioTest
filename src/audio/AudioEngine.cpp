@@ -66,6 +66,14 @@ audioEngine::audioEngine()
                                              aef_delay3_label_short, 
                                              aef_delay3_label_long) );  
 
+  m_devices.push_back( new audioEffektDelay( idgen, 
+                                             aef_delay4_label_short, 
+                                             aef_delay4_label_long) );
+
+  m_devices.push_back( new audioEffektDelay( idgen, 
+                                             aef_delay5_label_short, 
+                                             aef_delay5_label_long) );                                             
+
   //connect
   //auto adc = m_devices.at(0); 
    m_devices.at(1); 
@@ -104,32 +112,47 @@ audioEngine::audioEngine()
       }
       //
       // Mix[2] -----> delay[1]
-      // Mix[3]--| 
       //   
-      else if(mix_cnt == 2 || mix_cnt == 3){
+      else if(mix_cnt == 2)
+      {
         delays.at(1)->setInputStream(mix, 0, 0);
         delays.at(1)->setInputStream(mix, 1, 1);
-        
-
-          mhelp->setInputStream(delays.at(1), 0, 0 );
-          mhelp->setInputStream(delays.at(1), 1, 1 );     
-
-
-         
+        mhelp->setInputStream(delays.at(1), 0, 0 );
+        mhelp->setInputStream(delays.at(1), 1, 1 );     
       }
       //
-      // Mix[4] -----> delay[2]
-      // Mix[5]--|
-      //          
-      else if(mix_cnt == 4 || mix_cnt == 5){
+      // Mix[3] -----> delay[2]
+      //   
+      else if(mix_cnt == 3)
+      {
         delays.at(2)->setInputStream(mix, 0, 0);
         delays.at(2)->setInputStream(mix, 1, 1);
+        mhelp->setInputStream(delays.at(2), 0, 0 );
+        mhelp->setInputStream(delays.at(2), 1, 1 );     
+      }
+      //
+      // Mix[4] -----> delay[3]
+      //   
+      else if(mix_cnt == 4)
+      {
+        delays.at(3)->setInputStream(mix, 0, 0);
+        delays.at(3)->setInputStream(mix, 1, 1);
+        mhelp->setInputStream(delays.at(3), 0, 0 );
+        mhelp->setInputStream(delays.at(3), 1, 1 );     
+      }
+      //
+      // Mix[5] -----> delay[4]
+      //   
+      else if(mix_cnt == 4)
+      {
+        delays.at(4)->setInputStream(mix, 0, 0);
+        delays.at(4)->setInputStream(mix, 1, 1);
+        mhelp->setInputStream(delays.at(4), 0, 0 );
+        mhelp->setInputStream(delays.at(4), 1, 1 );     
+      }
 
-          mhelp->setInputStream(delays.at(2), 0, 0 );
-          mhelp->setInputStream(delays.at(2), 1, 1 );   
-         
-      } 
 
+      //create a new help mixer
       if(mix_cnt == 2){
         mix_helpers.push_back(mhelp);
         mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 );   
