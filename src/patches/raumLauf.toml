@@ -1,20 +1,20 @@
 [delay_1]
   left  = 0.44
-  right = 0.1
-  room  = 0.4
-  wet   = 0.1
+  right = 0.0
+  room  = 0.15
+  wet   = 0.15
 
 [delay_2]
   left  = 0.44
-  right = 0.1
-  room  = 0.4
-  wet   = 0.1
+  right = 0.14
+  room  = 0.15
+  wet   = 0.22
 
 [delay_3]
-  left  = 0.44
-  right = 0.1
-  room  = 0.4
-  wet   = 0.1 
+  left  = 0.8
+  right = 0.2
+  room  = 0.2
+  wet   = 0.9
 
 [delay_4]
   left  = 0.44
@@ -35,26 +35,26 @@
   wet   = 0.1     
 
 [mixer_1] 
-  vol= 0.354   
-  pan= 0.0  
+  vol= 0.1  
+  pan= 0.1
 
 [mixer_2] 
-  vol= 0.54   
-  pan= 0.0
+  vol= 0.2   
+  pan= 1.0
 
 [mixer_3] 
-  vol= 0.54   
-  pan= 0.0 
+  vol= 0.3   
+  pan= 0.3
 
 [mixer_4] 
   vol= 0.4   
-  pan= 0.0 
+  pan= 1.0 
 
 [mixer_5] 
-  vol= 0.54   
-  pan= 0.6 
+  vol= 0.5   
+  pan= 0.5 
 
 [mixer_6]
-  vol= 0.84 
-  pan= 0.0   
+  vol= 0.6 
+  pan= 1.0   
 

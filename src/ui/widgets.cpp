@@ -69,7 +69,7 @@ void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
 
 void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw, bool updated)
 {
-  if(!getActive()){return;}
+  if(!getActive() && updated){return;}
 
   if(p_tft == NULL){return;}    
   if(ch >= m_channel_cnt) {return;}
@@ -379,7 +379,7 @@ void WidgetDialGroup::setDialVal(uint8_t ch, float val, bool draw)
 
 void WidgetDialGroup::setDialVal(uint8_t ch, float val, bool draw, bool update)
 {
-  if(!getActive()){return;}
+  if(!getActive() && update){return;}
 
   if(p_tft == NULL){return;}
   if(ch >= m_channel_cnt) {return;}

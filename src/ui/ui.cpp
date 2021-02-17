@@ -353,15 +353,23 @@ void UserInterface::change_page(uint8_t p)
   switch(m_page){
 
     case PAGE_MAIN:
-      Serial.print("page: FADER\n");
-      p_volume_bars->setActive(true);  
- 
+      Serial.print("page: FADER\n"); 
       r=0;
       p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
       for(auto mix : device){
         p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
-      }  
+      }
+
+      dial = (uint8_t)DIAL_PAGE_PAN;   
      
+      r=0;
+      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
+      for(auto mix : device){
+        p_dial_pages[dial]->setDialVal(r++, mix->getParamValue(0,1), false, false);
+      }  
+
+      p_volume_bars->setActive(true); 
+
       p_volume_bars->drawAllChannels();
       p_volume_bars->drawUpdate(true); 
       p_volume_bars->getFaderVals(vals, KNOB_CNT);
@@ -370,16 +378,23 @@ void UserInterface::change_page(uint8_t p)
 
     case PAGE_PAN:
       Serial.print("page PAN\n"); 
-      dial = (uint8_t)DIAL_PAGE_PAN;   
-      p_dial_pages[dial]->setActive(true);
 
       r=0;
       p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
       for(auto mix : device){
         p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
-      }  
-     
+      }
 
+      dial = (uint8_t)DIAL_PAGE_PAN;   
+     
+      r=0;
+      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
+      for(auto mix : device){
+        p_dial_pages[dial]->setDialVal(r++, mix->getParamValue(0,1), false, false);
+      }  
+
+
+      p_dial_pages[dial]->setActive(true);
       p_dial_pages[dial]->drawInfo(page_list[dial]);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 
@@ -418,7 +433,16 @@ void UserInterface::change_page(uint8_t p)
       Serial.print(m_page_sub);
       Serial.print("\n");
       if(m_page_sub>3){m_page_sub = 0;}      
-      dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;   
+      dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;  
+
+      p_engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device); 
+      if(m_page_sub<device.size()){
+        p_dial_pages[dial]->setDialVal(0, device.at(m_page_sub)->getParamValue(0,0), false, false);
+        p_dial_pages[dial]->setDialVal(1, device.at(m_page_sub)->getParamValue(0,1), false, false);
+        p_dial_pages[dial]->setDialVal(2, device.at(m_page_sub)->getParamValue(0,2), false, false);   
+        p_dial_pages[dial]->setDialVal(5, device.at(m_page_sub)->getParamValue(0,3), false, false);       
+      }      
+      
       p_dial_pages[dial]->setActive(true);
       p_dial_pages[dial]->drawInfo(send_str_list[m_page_sub]);               
       p_dial_pages[dial]->drawAllChannels();

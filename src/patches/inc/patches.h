@@ -3,6 +3,5 @@
 
 
 #include "raumLauf.h"
-#include "setting2.h"
 
 #endif
