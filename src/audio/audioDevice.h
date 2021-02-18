@@ -289,10 +289,8 @@ class audioDevice
           }
         }
       }
-      else
-      {
-        return m_params.at(index)->getValue();
-      }      
+
+      return m_params.at(index)->getValue();   
     }
 
     float getParamValue(uint32_t id){
@@ -301,6 +299,7 @@ class audioDevice
           return param->getValue();
         }
       }
+      return 0.;
     }
 
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
