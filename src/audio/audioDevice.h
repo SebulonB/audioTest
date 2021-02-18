@@ -283,13 +283,24 @@ class audioDevice
     float getParamValue(uint32_t id, uint8_t index){
       if(index>=m_params.size())
       {
-        //use id instead
-        return 0.;
+        for(auto param : m_params){
+          if(param->getId() == id){
+            return param->getValue();
+          }
+        }
       }
       else
       {
         return m_params.at(index)->getValue();
       }      
+    }
+
+    float getParamValue(uint32_t id){
+      for(auto param : m_params){
+        if(param->getId() == id){
+          return param->getValue();
+        }
+      }
     }
 
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
@@ -321,6 +332,9 @@ class audioDevice
                           getLabel(LABEL_SHORT), audio_ch_in);
           Serial.print(str_);
 #endif
+          if(inputStreamExtras_callback != NULL){
+            inputStreamExtras_callback(pin, audio_ch_out, audio_ch_in);
+          }
           return 0;
         }
       }
@@ -383,6 +397,11 @@ class audioDevice
     const int m_max_channels{2}; //0:left / 1:rigth
 
     audioDeviceParam * usedParam() {return m_used_param;}
+
+    std::function <void (audioDevice *pin, 
+                         uint8_t audio_ch_out, 
+                         uint8_t audio_ch_in )> inputStreamExtras_callback {NULL};
+
 
     //debugging
 #ifdef DEBUG_AUDIO_DEVICE
