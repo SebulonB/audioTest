@@ -7,7 +7,7 @@
 [delay_2]
   left  = 0.44
   right = 0.14
-  room  = 0.15
+  room  = 1.0
   wet   = 0.22
 
 [delay_3]
@@ -44,14 +44,14 @@
 
 [mixer_3] 
   vol= 0.4  
-  pan= 0.3
+  pan= 0.35
 
 [mixer_4] 
-  vol= 0.0   
+  vol= 0.6  
   pan= 0.35 
 
 [mixer_5] 
-  vol= 0.0  
+  vol= 0.6  
   pan= 0.5
 
 [mixer_6]
