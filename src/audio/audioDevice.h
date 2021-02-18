@@ -141,14 +141,29 @@ class audioDeviceParam
       }
     }
 
-    float getValue(){          return m_value; }
-    
+    float getValue(){          
+      if(get_callback == NULL){
+        return m_value;
+      }
+      return get_callback();
+    }      
+    void set_getCallback(std::function <float (void)> funcp){
+      get_callback = funcp;
+    }    
+
+    float getValueScaled(){    
+      if(getScaled_callback == NULL){
+        return m_value_scaled; 
+      }
+      return getScaled_callback();
+    }
+    void set_getScaledCallback(std::function <float (void)> funcp){
+      getScaled_callback = funcp;
+    }
+   
     float getValueScaledMax(){ return m_val_max; }
 
-    float getValueScaledMin(){ return m_val_min; }
-
-    float getValueScaled(){    return m_value_scaled; }
-   
+    float getValueScaledMin(){ return m_val_min; }   
 
     void  setValue(float val){  
       if(val >= -1.0 && val <= 1.0)
@@ -179,6 +194,10 @@ class audioDeviceParam
     
     //update callback audioEffekt
     std::function <void (uint32_t, float)> update_callback {NULL};
+
+    std::function <float (void)>              get_callback {NULL};
+    std::function <float (void)>        getScaled_callback {NULL};
+
 };
 
 

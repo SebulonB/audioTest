@@ -130,9 +130,6 @@ void  init_ui(UserInterface *ui, audioEngine *en, patchHandler *patch)
   p_ui->setPatchInterface(patch);
   p_ui->setAudioEngine(en);
   p_ui->init();
-
-
-
 }
 
 
@@ -190,13 +187,18 @@ void UserInterface::init()
   p_tft->setRotation(2); //270  
 
   m_page_cnt = DIAL_PAGE_NUM + 1; //+Fader
-  
+
+  updateFromIParser();
+
   change_page(PAGE_MAIN);
 }
 
 void UserInterface::do_stuff()
 {
   float val;
+  std::vector<audioDevice *> mixers;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, mixers);   
+
   
   p_buttons->update();
 
@@ -221,6 +223,13 @@ void UserInterface::do_stuff()
     if(p_buttons->read(i)){
       change_page(i);
     }
+  }
+
+  //get peaks
+  int i=0;
+  for(auto mix : mixers){
+    val = mix->getParamValue(0, 2);//Peak
+    updateBars(i++, val);
   }
 
   p_volume_bars->drawUpdate(false); 
@@ -310,6 +319,53 @@ bool  UserInterface::getDialActive(enum DIAL_PAGE dial, uint8_t ch)
   return false;
 }
 
+void UserInterface::updateFromIParser(void)
+{
+  int i;
+  uint8_t dial; 
+  char str1_[100];
+
+  //
+  // Init Mixer
+  std::vector<audioDevice *> mixers;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, mixers);   
+
+  i=0;
+  dial = (uint8_t)DIAL_PAGE_PAN;
+  for(auto mix : mixers){
+    sprintf(str1_, "ui->iParse(%d): %6s %3.3f %3.3f\n",i, mix->getLabel(LABEL_SHORT),
+                     mix->getParamValue(0,0), mix->getParamValue(0,1));
+    Serial.print(str1_);
+      
+    p_volume_bars->setFaderVal(     i, mix->getParamValue(0,0), false, false );
+    p_dial_pages[dial]->setDialVal( i, mix->getParamValue(0,1), false, false );
+
+    i++;
+  }
+
+
+  //
+  // Init Delays
+  std::vector<audioDevice *> delays;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delays); 
+
+  dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY;// + m_page_sub;
+  for(auto delay : delays){
+    if(dial > (uint8_t)DIAL_PAGE_EFFECT_DELAY5){break;}
+    sprintf(str1_, "ui->iParse(%d): %6s %3.3f %3.3f\n", dial-(uint8_t)DIAL_PAGE_EFFECT_DELAY,
+                        delay->getLabel(LABEL_SHORT),
+                        delay->getParamValue(0,0), delay->getParamValue(0,1));
+    Serial.print(str1_);
+
+    p_dial_pages[dial]->setDialVal(0, delay->getParamValue(0,0), false, false);
+    p_dial_pages[dial]->setDialVal(1, delay->getParamValue(0,1), false, false);
+    p_dial_pages[dial]->setDialVal(2, delay->getParamValue(0,2), false, false);   
+    p_dial_pages[dial]->setDialVal(5, delay->getParamValue(0,3), false, false);       
+    
+    dial++;
+  }   
+}
+
 void UserInterface::change_page(uint8_t p)
 {
   if(    p_tft          == NULL
@@ -353,29 +409,15 @@ void UserInterface::change_page(uint8_t p)
   float vals[KNOB_CNT]={0};  
   uint8_t dial = 0;//(uint8_t)DIAL_PAGE_PAN;      
   char str_[10];
-  int r=0;
-  std::vector<audioDevice *> device;
+
+
   
   switch(m_page){
 
     case PAGE_MAIN:
       Serial.print("page: FADER\n"); 
-      r=0;
-      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
-      for(auto mix : device){
-        p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
-      }
-
-      dial = (uint8_t)DIAL_PAGE_PAN;   
-     
-      r=0;
-      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
-      for(auto mix : device){
-        p_dial_pages[dial]->setDialVal(r++, mix->getParamValue(0,1), false, false);
-      }  
-
       p_volume_bars->setActive(true); 
-
+      updateFromIParser();      
       p_volume_bars->drawAllChannels();
       p_volume_bars->drawUpdate(true); 
       p_volume_bars->getFaderVals(vals, KNOB_CNT);
@@ -383,24 +425,10 @@ void UserInterface::change_page(uint8_t p)
     break;
 
     case PAGE_PAN:
-      Serial.print("page PAN\n"); 
-
-      r=0;
-      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
-      for(auto mix : device){
-        p_volume_bars->setFaderVal(r++, mix->getParamValue(0,0), false, false);
-      }
-
-      dial = (uint8_t)DIAL_PAGE_PAN;   
-     
-      r=0;
-      p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, device);       
-      for(auto mix : device){
-        p_dial_pages[dial]->setDialVal(r++, mix->getParamValue(0,1), false, false);
-      }  
-
-
+      Serial.print("page PAN\n");
+      dial = (uint8_t)DIAL_PAGE_PAN;  
       p_dial_pages[dial]->setActive(true);
+      updateFromIParser();
       p_dial_pages[dial]->drawInfo(page_list[dial]);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 
@@ -427,6 +455,7 @@ void UserInterface::change_page(uint8_t p)
       dial = (uint8_t)DIAL_PAGE_SEND_CH1 + m_page_sub;   
       sprintf(str_, "send CH:%d", m_page_sub+1 );
       p_dial_pages[dial]->setActive(true);
+        updateFromIParser();
       p_dial_pages[dial]->drawInfo(str_);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 
@@ -438,17 +467,8 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page EFFECT | "); 
       Serial.print(m_page_sub);
       Serial.print("\n");
-      if(m_page_sub>6){m_page_sub = 0;}      
-      dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;  
-
-      p_engine->getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, device); 
-      if(m_page_sub<device.size()){
-        p_dial_pages[dial]->setDialVal(0, device.at(m_page_sub)->getParamValue(0,0), false, false);
-        p_dial_pages[dial]->setDialVal(1, device.at(m_page_sub)->getParamValue(0,1), false, false);
-        p_dial_pages[dial]->setDialVal(2, device.at(m_page_sub)->getParamValue(0,2), false, false);   
-        p_dial_pages[dial]->setDialVal(5, device.at(m_page_sub)->getParamValue(0,3), false, false);       
-      }      
-      
+      if(m_page_sub>6){m_page_sub = 0;} 
+      dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY;       
       p_dial_pages[dial]->setActive(true);
       p_dial_pages[dial]->drawInfo(send_str_list[m_page_sub]);               
       p_dial_pages[dial]->drawAllChannels();

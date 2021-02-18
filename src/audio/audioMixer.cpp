@@ -41,6 +41,16 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                                             ad_label_pan_short, ad_label_pan_long,
                                             cb ) );
 
+  auto cb_getpeak = std::bind( &audioMixer::getPeak, this);
+  auto peak = new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_DEZIBEL,
+                                            NULL, NULL,
+                                            NULL );
+
+  peak->set_getCallback(cb_getpeak);                                             
+  m_params.push_back( peak );
+                      
 
   //
   // in1 
@@ -93,6 +103,17 @@ void audioMixer::updateVolume(uint32_t id, float val)
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   printCallbackUpdate(val, "volume/pan");
 #endif  
+}
+
+float audioMixer::getPeak(void){
+
+  if(m_peak == NULL){return 0.5;}
+
+  if(m_peak->available()){
+    m_peak_last = m_peak->read();
+  }
+
+  return m_peak_last;
 }
 
 

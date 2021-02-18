@@ -153,7 +153,7 @@ audioEngine::audioEngine()
 
 
       //create a new help mixer
-      if(mix_cnt == 2){
+      if(mix_cnt%2){
         mix_helpers.push_back(mhelp);
         mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 );   
       }

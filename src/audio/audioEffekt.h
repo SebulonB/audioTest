@@ -93,6 +93,10 @@ class audioMixer : public audioDevice
 
   protected:
     void updateVolume(uint32_t id, float val);
+    
+    float getPeak();
+    AudioAnalyzePeak  *m_peak{NULL};  
+    float m_peak_last{0.};
 
 }; 
 

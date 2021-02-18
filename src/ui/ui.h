@@ -94,6 +94,8 @@ class UserInterface
     void do_stuff();
     void change_page(uint8_t p);
 
+    void updateFromIParser(void);
+
 };
 
 void  init_ui(UserInterface *ui, audioEngine *en, patchHandler *patch);

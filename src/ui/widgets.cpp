@@ -69,18 +69,20 @@ void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw)
 
 void WidgetVolumeBars::setFaderVal(uint8_t ch, float val, bool draw, bool updated)
 {
+  //Serial.print("setFader:  ");
   if(!getActive() && updated){return;}
 
+ // Serial.print(val);
   if(p_tft == NULL){return;}    
   if(ch >= m_channel_cnt) {return;}
   if(val < 0.0 || val > 1.0) {return;}
 
   fader_saved_val[ch]    = val;
   fader_updated_draw[ch] = true;
-  
-  if(updated){
+  //Serial.print("\n");
+  //if(updated){
     fader_updated_get[ch]  = true;
-  }
+  //}
 
   if(draw && getActive()){
     draw_fader(ch, val, false);  
