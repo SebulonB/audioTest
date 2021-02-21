@@ -26,8 +26,8 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   m_id = idgen->generateID(ID_TYPE_DEVICE_MIXER);
 
   //create params
-  auto cb = std::bind( &audioMixer::updateVolume, 
-                       this, std::placeholders::_1, std::placeholders::_2 );
+  auto cb = std::bind( &audioMixer::updateVolume, this, 
+                        std::placeholders::_1, std::placeholders::_2 );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
                                             0., 1.111, .9,
@@ -48,13 +48,21 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                                             NULL, NULL,
                                             NULL );
 
+  auto cb_peak = std::bind( &audioMixer::setInputExtra, this,
+                             std::placeholders::_1, 
+                             std::placeholders::_2,
+                             std::placeholders::_3 );
+  setInputStreamExpansionCallback(cb_peak);
+
   peak->set_getCallback(cb_getpeak);                                             
   m_params.push_back( peak );
                       
 
   //
-  // in1 
-  // in2 
+  // in1 ---> out1 
+  //      |-> peak
+  // 
+  // in2 ---> out2
   //
   for(int i=0; i<m_max_channels; i++)
   {
@@ -62,12 +70,45 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
   }
+  m_peak = new  AudioAnalyzePeak();
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   sprintf(str_, "created mixer: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
   Serial.print(str_);
 #endif    
 
+}
+
+void audioMixer::setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in)
+{
+  if(pin == NULL) {
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
+    sprintf( str_, "setInputCord: no audio device handed over\n");
+    Serial.print(str_);
+#endif
+    return;
+  }
+
+  //for first, we connect [peak] only to outStream == 0
+  if(audio_ch_in != 0){
+    return;
+  }
+
+  if(m_peak == NULL){
+    return;
+  }
+
+  AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
+  m_cords.push_back(new AudioConnection(*stream_in, 0,
+                                        *m_peak, 0 ));
+  
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
+    sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s:peak \n", 
+                      pin->getLabel(LABEL_SHORT), audio_ch_out,
+                      getLabel(LABEL_SHORT));
+    Serial.print(str_);
+#endif
+  //connect only on 'audio_
 }
 
 

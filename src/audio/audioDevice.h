@@ -12,7 +12,7 @@
 #include "../patches/handler/handler.h"
 
 #define DEBUG_AUDIO_DEVICE
-//#define DEBUG_AUDIO_DEVICE_CORDS
+#define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
@@ -300,6 +300,10 @@ class audioDevice
         }
       }
       return 0.;
+    }
+
+    void setInputStreamExpansionCallback(std::function <void (audioDevice *, uint8_t, uint8_t)> funcp){
+      inputStreamExtras_callback = funcp;
     }
 
     int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )

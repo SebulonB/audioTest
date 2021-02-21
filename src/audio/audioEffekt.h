@@ -97,6 +97,7 @@ class audioMixer : public audioDevice
     float getPeak();
     AudioAnalyzePeak  *m_peak{NULL};  
     float m_peak_last{0.};
+    void  setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in);
 
 }; 
 
