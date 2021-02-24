@@ -14,7 +14,7 @@
 
 
 //#define DEBUG_USAGE
-//#define DEBUG_KNOB
+#define DEBUG_KNOB
 
 
 //
@@ -377,6 +377,11 @@ void UserInterface::change_page(uint8_t p)
   Serial.print("\n");  
 #endif   
         
+  //save 
+  if(p==11){
+    Serial.print("Save to Save\n"); 
+    p_engine->saveAllParamsToFile();
+  }
 
   //submenu
   if(p<6) //knob dial button

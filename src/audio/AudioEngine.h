@@ -3,10 +3,16 @@
 
 #include <vector>
 
+#include <SD.h>
+#include <SPI.h>
+#include <ArduinoJson.h>
+
 #include "../patches/handler/handler.h"
 
 #include "audioEffekt.h"
 #include "audioDevice.h"
+
+
 
 
 //#define AUDIO_ENGINE_DEBUG
@@ -37,6 +43,13 @@ class audioEngine
         device->setPatchInterface(ipatches);
         device->updateFromPatchInterface(); 
       }
+    }
+
+    void saveAllParamsToFile(void){
+      for (auto device : m_devices){
+        device->saveToPatchInterface();
+      }
+      ipatches->saveWriteHandler();      
     }
 
 

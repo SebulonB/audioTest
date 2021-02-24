@@ -27,7 +27,10 @@ class Storeage {
       if(!m_init){return;}
 
       m_file = SD.open(_file, FILE_WRITE);
-    
+      if(!m_file){return;}
+
+
+
 #ifdef DEBUG_STOREAGE     
       sprintf(str_, "SD: open file: %s\n", _file);   
       Serial.println(str_);
@@ -41,14 +44,14 @@ class Storeage {
       m_file.println(_data);
 
 #ifdef DEBUG_STOREAGE     
-      sprintf(str_, "SD: open file: %s\n", _file);   
+      sprintf(str_, "SD: write data\n");   
       Serial.println(str_);
 #endif      
     }    
 
   private:
     File m_file;
-    bool m_init(false);
+    bool m_init{false};
 
     char str_[100];
 

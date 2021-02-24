@@ -11,7 +11,7 @@
 
 #include "../patches/handler/handler.h"
 
-#define DEBUG_AUDIO_DEVICE
+//#define DEBUG_AUDIO_DEVICE
 #define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
@@ -226,6 +226,13 @@ class audioDevice
           m_used_param = NULL;
         }    
       }
+    }
+
+    void saveToPatchInterface(void){
+      if(ipatches==NULL){return;}
+      for(auto param : m_params){
+        ipatches->saveParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_SHORT), param->getValue()); 
+      }      
     }
 
     const char * getLabel(enum LABEL_TYPE type)

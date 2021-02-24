@@ -16,7 +16,7 @@ echo "" >> $dir_inc"patches.h"
 for file in $dir_src*
 do
   val=$(basename $file)
-  if [[ "$val" == *.toml ]]       
+  if [[ "$val" == *.toml ]] || [[ "$val" == *.json ]]      
   then
     # *.toml -> *.h
     var_d=${val%?????}
