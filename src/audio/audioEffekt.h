@@ -50,6 +50,7 @@ class audioADC : public audioDevice
 //
 const char aef_dac_label_short[] PROGMEM = "dac";
 const char aef_dac_label_long[]  PROGMEM = "analog out";
+#define AUDIODAC_INPUT_STREAMS 16
 
 class audioDAC : public audioDevice
 {
@@ -117,6 +118,8 @@ const char aef_delay4_label_short[] PROGMEM = "dlay_4";
 const char aef_delay4_label_long[]  PROGMEM = "delay_4";
 const char aef_delay5_label_short[] PROGMEM = "dlay_5";
 const char aef_delay5_label_long[]  PROGMEM = "delay_5";
+
+#define AUDIODELAY_INPUT_STREAMS 6
 
 class audioEffektDelay : public audioDevice
 {

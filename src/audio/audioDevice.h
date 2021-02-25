@@ -13,7 +13,7 @@
 #include "../patches/handler/handler.h"
 
 //#define DEBUG_AUDIO_DEVICE
-//#define DEBUG_AUDIO_DEVICE_CORDS
+#define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
@@ -208,6 +208,13 @@ class audioDevice
 {
   public:
     audioDevice(){};
+    audioDevice(uint8_t cnt){
+      if(cnt >= MIXERC_MAX_CHANNELS){
+        cnt = MIXERC_MAX_CHANNELS;
+      }
+      m_mix_in_max_connections = cnt;
+    }
+
     ~audioDevice(){};
     
     uint32_t getId(){return m_id;}
@@ -396,8 +403,8 @@ class audioDevice
 
     //Audio Input
     std::vector<audioMixerC *>  m_mix_in;
-    std::vector<int>                   m_mix_in_connections;
-    const int                          m_mix_in_max_connections{4};
+    std::vector<int>            m_mix_in_connections;
+    int                         m_mix_in_max_connections{4};
 
     //Audio Out
     std::vector<audioMixerC *>  m_mix_out;

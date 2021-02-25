@@ -84,8 +84,6 @@ audioEngine::audioEngine()
   // ch:0 left | ch:1 rigth
   //
   uint8_t mix_cnt = 0;
-  std::vector<audioDevice *> mix_helpers;
-  audioDevice* mhelp = new audioMixer( idgen, ae_mhelp_label1, ae_mhelp_label1 ); 
 
   std::vector<audioDevice *> delays;
   getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delays);
@@ -93,11 +91,16 @@ audioEngine::audioEngine()
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
       
+      //connect adc with mixer
       mix->setInputStream(adc, mix_cnt, 0);
       mix->setInputStream(adc, mix_cnt, 1);
 
+      //connect mixer with master
+      dac->setInputStream(mix, 0, 0 );
+      dac->setInputStream(mix, 1, 1 );    
     
-      //
+      //connect mixer ->delay-> master
+      
       // Mix[0] -----> delay[0]
       // Mix[1] --|
       //
@@ -105,8 +108,8 @@ audioEngine::audioEngine()
       {
         delays.at(0)->setInputStream(mix, 0, 0);
         delays.at(0)->setInputStream(mix, 1, 1);
-        mhelp->setInputStream(delays.at(0), 0, 0 );
-        mhelp->setInputStream(delays.at(0), 1, 1 );     
+        dac->setInputStream(delays.at(0), 0, 0 );
+        dac->setInputStream(delays.at(0), 1, 1 );     
          
       }
       //
@@ -116,8 +119,8 @@ audioEngine::audioEngine()
       {
         delays.at(1)->setInputStream(mix, 0, 0);
         delays.at(1)->setInputStream(mix, 1, 1);
-        mhelp->setInputStream(delays.at(1), 0, 0 );
-        mhelp->setInputStream(delays.at(1), 1, 1 );     
+        dac->setInputStream(delays.at(1), 0, 0 );
+        dac->setInputStream(delays.at(1), 1, 1 );     
       }
       //
       // Mix[3] -----> delay[2]
@@ -126,8 +129,8 @@ audioEngine::audioEngine()
       {
         delays.at(2)->setInputStream(mix, 0, 0);
         delays.at(2)->setInputStream(mix, 1, 1);
-        mhelp->setInputStream(delays.at(2), 0, 0 );
-        mhelp->setInputStream(delays.at(2), 1, 1 );     
+        dac->setInputStream(delays.at(2), 0, 0 );
+        dac->setInputStream(delays.at(2), 1, 1 );     
       }
       //
       // Mix[4] -----> delay[3]
@@ -136,8 +139,8 @@ audioEngine::audioEngine()
       {
         delays.at(3)->setInputStream(mix, 0, 0);
         delays.at(3)->setInputStream(mix, 1, 1);
-        mhelp->setInputStream(delays.at(3), 0, 0 );
-        mhelp->setInputStream(delays.at(3), 1, 1 );     
+        dac->setInputStream(delays.at(3), 0, 0 );
+        dac->setInputStream(delays.at(3), 1, 1 );     
       }
       //
       // Mix[5] -----> delay[4]
@@ -146,27 +149,14 @@ audioEngine::audioEngine()
       {
         delays.at(4)->setInputStream(mix, 0, 0);
         delays.at(4)->setInputStream(mix, 1, 1);
-        mhelp->setInputStream(delays.at(4), 0, 0 );
-        mhelp->setInputStream(delays.at(4), 1, 1 );     
+        dac->setInputStream(delays.at(4), 0, 0 );
+        dac->setInputStream(delays.at(4), 1, 1 );     
       }
 
-
-      //create a new help mixer
-      if(mix_cnt%2){
-        mix_helpers.push_back(mhelp);
-        mhelp = new audioMixer( idgen, ae_mhelp_label2, ae_mhelp_label2 );   
-      }
-
-      mix_cnt++;
+       mix_cnt++;
     }
   }
-  mix_helpers.push_back(mhelp);
 
-  for(unsigned x=0; x<mix_helpers.size(); x++){
-    dac->setInputStream(mix_helpers.at(x), 0, 0);
-    dac->setInputStream(mix_helpers.at(x), 1, 1);      
-  }
-  
 
 
 #ifdef AUDIO_ENGINE_DEBUG

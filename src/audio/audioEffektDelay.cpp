@@ -43,7 +43,7 @@ const char aef_label_delay_param_room[]  PROGMEM = "room";
 
 
 audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen, 
-                                    const char * l_short, const char * l_long)
+                                    const char * l_short, const char * l_long) : audioDevice(AUDIODELAY_INPUT_STREAMS)
 {
   //set labels
   m_label_long  = l_long;
