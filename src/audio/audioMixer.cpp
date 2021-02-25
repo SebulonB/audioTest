@@ -72,6 +72,11 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   }
   m_peak = new  AudioAnalyzePeak();
 
+  for(int i=0; i<AUDIOMIXER_MAX_SENDS; i++){
+    m_sends.push_back(new AudioAmplifier());
+  }
+  
+
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   sprintf(str_, "created mixer: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
   Serial.print(str_);

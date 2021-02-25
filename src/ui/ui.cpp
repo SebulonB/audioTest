@@ -59,13 +59,13 @@ char *delay_params[KNOB_CNT] = {
 
 char *send_str_list[KNOB_CNT] = {
   
-  "delay1",
-  "delay2",
-  "delay3",
-  "delay4",
-  "delay5", 
+  "dlayA",
+  "dlayB",
+  "dlayC",
+  "dlayD",
+  "dlayE", 
 
-  "reverb",
+  "rverb",
 };
 
 char *sting_list[KNOB_CNT] = {

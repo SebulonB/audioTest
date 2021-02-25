@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "audioDevice.h"
+#include "audioMixer.h"
 
 
 //
@@ -66,41 +67,6 @@ class audioDAC : public audioDevice
     enum AUDIO_DAC m_type;
 
 };
-
-//
-// Main Input Mixer Channel
-// Mixer with Pan and Mute input
-//
-const char aef_mixer1_label_short[] PROGMEM = "mix_1";
-const char aef_mixer1_label_long[]  PROGMEM = "mixer_1";
-const char aef_mixer2_label_short[] PROGMEM = "mix_2";
-const char aef_mixer2_label_long[]  PROGMEM = "mixer_2";
-const char aef_mixer3_label_short[] PROGMEM = "mix_3";
-const char aef_mixer3_label_long[]  PROGMEM = "mixer_3";
-const char aef_mixer4_label_short[] PROGMEM = "mix)4";
-const char aef_mixer4_label_long[]  PROGMEM = "mixer_4";
-const char aef_mixer5_label_short[] PROGMEM = "mix_5";
-const char aef_mixer5_label_long[]  PROGMEM = "mixer_5";
-const char aef_mixer6_label_short[] PROGMEM = "mix_6";
-const char aef_mixer6_label_long[]  PROGMEM = "mixer_6";
-
-class audioMixer : public audioDevice
-{
-  public:
-    audioMixer(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
-    ~audioMixer(){};
-
-    AudioStream *getOutputStream(uint8_t aduio_ch);  
-
-  protected:
-    void updateVolume(uint32_t id, float val);
-    
-    float getPeak();
-    AudioAnalyzePeak  *m_peak{NULL};  
-    float m_peak_last{0.};
-    void  setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in);
-
-}; 
 
 
 
