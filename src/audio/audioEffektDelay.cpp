@@ -21,10 +21,10 @@
 
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=131.36666870117188,350.3666687011719
-AudioMixer4              m_mix_in;         //xy=272.20001220703125,397.19995880126953
-AudioMixer4              m_feedback_mix; //xy=509.0833206176758,447
+audioMixerC              m_mix_in;         //xy=272.20001220703125,397.19995880126953
+audioMixerC              m_feedback_mix; //xy=509.0833206176758,447
 AudioEffectDelay         m_delay;        //xy=509.75,580.0000305175781
-AudioMixer4              m_mix_out__drywet; //xy=787.75,411.6666946411133
+audioMixerC              m_mix_out__drywet; //xy=787.75,411.6666946411133
 AudioOutputI2S           i2s2; //xy=1079.36669921875,761
 AudioConnection          patchCord1(m_mix_in, 0, m_feedback_mix, 0);
 AudioConnection          patchCord2(m_mix_in, 0, m_mix_out__drywet, 0);
@@ -93,16 +93,16 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
   //generate audio patch
   for(int i=0; i<2; i++){
 
-    AudioMixer4 *in  = new AudioMixer4();
+    audioMixerC *in  = new audioMixerC();
     for(int i=0; i<4;i++){in->gain(i, 1.);}
     m_mix_in.push_back(in);
     m_mix_in_connections.push_back(0);
 
-    AudioMixer4 *out = new AudioMixer4();
+    audioMixerC *out = new audioMixerC();
     for(int i=0; i<4;i++){in->gain(i, 1.);}
     m_mix_out.push_back(out);
 
-    AudioMixer4 *feedback = new AudioMixer4();
+    audioMixerC *feedback = new audioMixerC();
     feedback->gain(0, 1.0);
     feedback->gain(1, 0.0);
     m_feedback_mix.push_back(feedback);

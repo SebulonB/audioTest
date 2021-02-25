@@ -9,6 +9,7 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "audioDeviceHelpers.h"
 #include "../patches/handler/handler.h"
 
 //#define DEBUG_AUDIO_DEVICE
@@ -394,12 +395,12 @@ class audioDevice
     audioDeviceParam * m_used_param = NULL;
 
     //Audio Input
-    std::vector<AudioMixer4 *>    m_mix_in;
-    std::vector<int>              m_mix_in_connections;
-    const int                     m_mix_in_max_connections{4};
+    std::vector<audioMixerC *>  m_mix_in;
+    std::vector<int>                   m_mix_in_connections;
+    const int                          m_mix_in_max_connections{4};
 
     //Audio Out
-    std::vector<AudioMixer4 *>    m_mix_out;
+    std::vector<audioMixerC *>  m_mix_out;
 
     //Patch Cords
     std::vector<AudioConnection*> m_cords;

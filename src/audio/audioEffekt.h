@@ -133,8 +133,8 @@ class audioEffektDelay : public audioDevice
 
   private:
    std::vector<AudioEffectDelay *> m_delay;
-   std::vector<AudioMixer4 *>      m_feedback_mix;
-   //std::vector<AudioMixer4 *>      m_mix_out__drywet; -->m_mix_out
+   std::vector<audioMixerC *>      m_feedback_mix;
+   //std::vector<audioMixerC *>      m_mix_out__drywet; -->m_mix_out
 
 };
 

@@ -66,7 +66,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   //
   for(int i=0; i<m_max_channels; i++)
   {
-    AudioMixer4 *in  = new AudioMixer4();
+    audioMixerC *in  = new audioMixerC();
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
   }
