@@ -16,8 +16,8 @@
 //#include "../../toml/tomlcpp.h"
 #include "../../patches/inc/patches.h"
 
-#define FILE_STR "SET1.TXT"
-
+//#define FILE_STR "SET1.TXT"
+#define FILE_STR "SET_2.TXT"
 
 patchHandler::patchHandler(){
 #ifdef DEBUG_PATCH_HANDLER
@@ -46,11 +46,13 @@ bool patchHandler::getParamValue(const char *l_device, const char *l_param, floa
   _file.close();
   
   if(v == 0.0){
+    val = 0.0;
+
 #ifdef DEBUG_PATCH_HANDLER   
     sprintf(str_, "ph: getValue (%s | %-8s): fail or 0.0\n", l_device, l_param);   
     Serial.print(str_);
 #endif
-    return false;
+    return true;
   }
 
   val = v;
@@ -63,10 +65,15 @@ bool patchHandler::getParamValue(const char *l_device, const char *l_param, floa
 
 bool patchHandler::saveParamValue(const char *l_device, const char *l_param, float val)
 {
-  if(l_device == error_str || l_param == error_str){return false;}
+  if( (strcmp (l_device,error_str) == 0) || strcmp (l_param, error_str) == 0){return false;}
  
   m_doc_write[l_device][l_param] = val;
- 
+
+#ifdef DEBUG_PATCH_HANDLER   
+  sprintf(str_, "ph: savedParam (%s | %-8s): %3.3f\n", l_device, l_param, val);   
+  Serial.print(str_);
+#endif
+
   return true;
 }
 

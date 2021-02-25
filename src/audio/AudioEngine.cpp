@@ -83,7 +83,6 @@ audioEngine::audioEngine()
   //
   // ch:0 left | ch:1 rigth
   //
-  uint8_t adc_cnt = 0;
   uint8_t mix_cnt = 0;
   std::vector<audioDevice *> mix_helpers;
   audioDevice* mhelp = new audioMixer( idgen, ae_mhelp_label1, ae_mhelp_label1 ); 

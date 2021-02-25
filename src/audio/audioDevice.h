@@ -12,7 +12,7 @@
 #include "../patches/handler/handler.h"
 
 //#define DEBUG_AUDIO_DEVICE
-#define DEBUG_AUDIO_DEVICE_CORDS
+//#define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)

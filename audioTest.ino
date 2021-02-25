@@ -117,7 +117,7 @@ void loop() {
   } 
 
   s = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY);
-  e = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY3);
+  e = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY5);
   //check Delay Param
   for(int i=0; i<6;i++){
     for(int y=s; y<=e;y++){
