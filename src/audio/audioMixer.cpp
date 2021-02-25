@@ -69,13 +69,15 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
     audioMixerC *in  = new audioMixerC(4);
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
+ 
+    for(int x=0; x<AUDIOMIXER_MAX_SENDS; x++){
+      AudioAmplifier *amp = new AudioAmplifier();
+      m_sends.push_back(amp);
+      m_cords.push_back(new AudioConnection( *in, 0, *amp, 0));
+    }
   }
   m_peak = new  AudioAnalyzePeak();
 
-  for(int i=0; i<AUDIOMIXER_MAX_SENDS; i++){
-    m_sends.push_back(new AudioAmplifier());
-  }
-  
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   sprintf(str_, "created mixer: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
@@ -124,6 +126,22 @@ AudioStream *audioMixer::getOutputStream(uint8_t audio_ch)
   }
   return NULL;
 }
+AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch, uint8_t track)
+{
+
+  if    (type == STREAM_TYPE_MAIN){
+    return getOutputStream(audio_ch);
+  }
+
+  else if(type == STREAM_TYPE_SEND){
+    uint16_t send_num = (track*AUDIOMIXER_MAX_SENDS)+audio_ch;
+    if(send_num < m_sends.size()){
+      return m_sends.at(send_num);
+    }
+  }
+
+}
+
 
 void audioMixer::updateVolume(uint32_t id, float val)
 {
