@@ -20,7 +20,6 @@
 #include "src/ui/ui.h"
 #include "src/audio/audioEngine.h"
 #include "src/patches/handler/handler.h"
-#include "src/storeage/storeage.h"
 #include "audioPatchControl.h"
 
 
@@ -30,7 +29,6 @@ UserInterface     *ui=NULL;
 audioEngine       *engine=NULL;
 AudioPatchControl *apc=NULL;  
 patchHandler      *ipatches=NULL; 
-Storeage          *istoreage=NULL;
 
 //
 // Teensy Libs: Teensyduino/Contents/Java/hardware/teensy/avr
@@ -47,7 +45,6 @@ void setup(void) {
   engine    = new audioEngine();
   apc       = new AudioPatchControl(ui, engine);
   ipatches  = new patchHandler();
-  istoreage = new Storeage();
 
   engine->setPatchInterface(ipatches);
 

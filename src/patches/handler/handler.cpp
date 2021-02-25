@@ -19,6 +19,13 @@
 #define FILE_STR "SET_2.TXT"
 
 patchHandler::patchHandler(){
+
+  if (!SD.begin(BUILTIN_SDCARD)) {
+#ifdef DEBUG_PATCH_HANDLER    
+    Serial.println("SD Card. initialization failed!");
+#endif
+  }
+
 #ifdef DEBUG_PATCH_HANDLER
   Serial.print("patchHandler Init\n");
 #endif
