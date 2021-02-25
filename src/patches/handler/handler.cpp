@@ -13,7 +13,6 @@
 
 #include "handler.h"
 #include "../../audio/audioDevice.h"
-//#include "../../toml/tomlcpp.h"
 #include "../../patches/inc/patches.h"
 
 //#define FILE_STR "SET1.TXT"
@@ -90,7 +89,7 @@ void patchHandler::saveWriteHandler(void){
     return;
   }
 
-  if (serializeJson(m_doc_write, _file) == 0) {
+  if (serializeJsonPretty(m_doc_write, _file) == 0) {
 #ifdef DEBUG_PATCH_HANDLER      
     Serial.println(F("Failed to write to file"));
 #endif    
