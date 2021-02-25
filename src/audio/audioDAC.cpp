@@ -30,7 +30,7 @@ audioDAC::audioDAC( audioDeviceIdGenerator *idgen, enum AUDIO_DAC type )
   // in2 -> i2s[1]
   //
   for(int i=0; i<2; i++){
-    audioMixerC *in  = new audioMixerC();
+    audioMixerC *in  = new audioMixerC(4);
     for(int x=0;x<4;x++){in->gain(x,1.0);}
 
     m_mix_in.push_back(in);

@@ -93,16 +93,16 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
   //generate audio patch
   for(int i=0; i<2; i++){
 
-    audioMixerC *in  = new audioMixerC();
+    audioMixerC *in  = new audioMixerC(4);
     for(int i=0; i<4;i++){in->gain(i, 1.);}
     m_mix_in.push_back(in);
     m_mix_in_connections.push_back(0);
 
-    audioMixerC *out = new audioMixerC();
+    audioMixerC *out = new audioMixerC(4);
     for(int i=0; i<4;i++){in->gain(i, 1.);}
     m_mix_out.push_back(out);
 
-    audioMixerC *feedback = new audioMixerC();
+    audioMixerC *feedback = new audioMixerC(4);
     feedback->gain(0, 1.0);
     feedback->gain(1, 0.0);
     m_feedback_mix.push_back(feedback);

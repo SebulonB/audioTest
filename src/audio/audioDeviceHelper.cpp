@@ -44,12 +44,14 @@ static void applyGainThenAdd(int16_t *data, const int16_t *in, int32_t mult)
 	}
 }
 
+
+
 void audioMixerC::update(void)
 {
 	audio_block_t *in, *out=NULL;
 	unsigned int channel;
 
-	for (channel=0; channel < 4; channel++) {
+	for (channel=0; channel < m_cnt; channel++) {
 		if (!out) {
 			out = receiveWritable(channel);
 			if (out) {
