@@ -37,7 +37,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                                             cb ) );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            -1, 1, .0,
+                                            -1, 1, .5,
                                             UNIT_PERCENT,
                                             ad_label_pan_short, ad_label_pan_long,
                                             cb ) );

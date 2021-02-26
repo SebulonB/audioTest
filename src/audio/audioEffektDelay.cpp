@@ -58,13 +58,13 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                        this, std::placeholders::_1, std::placeholders::_2 );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0., 600., 20.,
+                                            0., 600., 0.,
                                             UNIT_TIME,
                                             aef_label_delay_param_left, aef_label_delay_param_left,
                                             cb_t ) );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0., 600., 20.,
+                                            0., 600., 0.,
                                             UNIT_TIME,
                                             aef_label_delay_param_right, aef_label_delay_param_right,
                                             cb_t ) );  
@@ -74,7 +74,7 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                        this, std::placeholders::_1, std::placeholders::_2 );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0., 1., 0.15,
+                                            0., 1., 0.0,
                                             UNIT_TIME,
                                             aef_label_delay_param_room, aef_label_delay_param_room,
                                             cb_f ) );   
@@ -84,7 +84,7 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
                        this, std::placeholders::_1, std::placeholders::_2 );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0., 1., 0.15,
+                                            0., 1., 0.0,
                                             UNIT_TIME,
                                             ad_label_drywet_short, ad_label_drywet_long,
                                             cb_dw ) );   
