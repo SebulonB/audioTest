@@ -35,6 +35,7 @@ class audioMixer : public audioDevice
 
   protected:
     void updateVolume(uint32_t id, float val);
+    void updateSend(uint32_t id, float val);
     
     //peak calc
     float getPeak();

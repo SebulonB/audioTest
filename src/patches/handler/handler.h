@@ -18,8 +18,8 @@ class patchHandler {
     void saveWriteHandler(void);
 
   private:
-    StaticJsonDocument<1024> m_doc_write;
-    StaticJsonDocument<1024> m_doc_read;
+    StaticJsonDocument<2048> m_doc_write;
+    StaticJsonDocument<2048> m_doc_read;
     File m_file_write;
 
 #ifdef DEBUG_PATCH_HANDLER

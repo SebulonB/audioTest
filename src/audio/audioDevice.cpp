@@ -190,10 +190,11 @@ int audioDevice::setInputStream( audioDevice *pin, AudioStream * stream_in, uint
 #if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CALLBACK)
 void audioDevice::printCallbackUpdate(float val, std::string s){
   if(m_used_param != NULL){
-    sprintf(str_, "CB Updated( %-10s ): %6s  %6s ( %1.3f | %3.3f)\n", 
-                    s.c_str(), m_label_long, 
+    sprintf(str_, "CB Updated: %-8s  %-8s ( %1.3f | %6.3f)  |  %-10s\n", 
+                    m_label_long, 
                     m_used_param->getLabel(LABEL_LONG),
-                    val, m_used_param->getValueScaled() );
+                    val, m_used_param->getValueScaled(),
+                    s.c_str() );
     Serial.print(str_);
   }
 }

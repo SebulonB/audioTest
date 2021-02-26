@@ -9,6 +9,7 @@
 #include <Audio.h>
 #include <Wire.h>
 
+#include "audioGlobalLabels.h"
 #include "audioDeviceHelpers.h"
 #include "../patches/handler/handler.h"
 
@@ -17,20 +18,6 @@
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
-
-#define AUDIO_DEVICE_MAX_CHANNELS  2
-#define AUDIO_DEVICE_MAX_IN_CHORDS 4
-
-//return string, if str pointer is not set 
-const char error_str[] PROGMEM = "unknown";
-
-//labels nearly all params are using
-const char ad_label_drywet_short[] PROGMEM = "wet";
-const char ad_label_drywet_long[]  PROGMEM = "dry/wet";
-const char ad_label_volume_short[] PROGMEM = "vol";
-const char ad_label_volume_long[]  PROGMEM = "volume";
-const char ad_label_pan_short[]    PROGMEM = "pan";
-const char ad_label_pan_long[]     PROGMEM = "pan";
 
 //
 enum ID_TYPE

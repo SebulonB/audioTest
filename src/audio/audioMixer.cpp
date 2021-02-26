@@ -25,7 +25,8 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
 
   m_id = idgen->generateID(ID_TYPE_DEVICE_MIXER);
 
-  //create params
+
+  // Volume/Pan
   auto cb = std::bind( &audioMixer::updateVolume, this, 
                         std::placeholders::_1, std::placeholders::_2 );
 
@@ -41,6 +42,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                                             ad_label_pan_short, ad_label_pan_long,
                                             cb ) );
 
+  //read Peak as Param
   auto cb_getpeak = std::bind( &audioMixer::getPeak, this);
   auto peak = new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
                                             0, 1, .0,
@@ -56,7 +58,46 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
 
   peak->set_getCallback(cb_getpeak);                                             
   m_params.push_back( peak );
-                      
+
+  //SendA to SendF  (1 .. 6)
+  auto cb_send = std::bind( &audioMixer::updateSend, this, 
+                            std::placeholders::_1, std::placeholders::_2 );        
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendA, ad_label_sendA,
+                                            cb_send ) );
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendB, ad_label_sendB,
+                                            cb_send ) );
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendC, ad_label_sendC,
+                                            cb_send ) );                  
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendD, ad_label_sendD,
+                                            cb_send ) );                  
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendE, ad_label_sendE,
+                                            cb_send ) );                  
+
+  m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_PERCENT,
+                                            ad_label_sendF, ad_label_sendF,
+                                            cb_send ) );                                                                                                                                      
 
   //
   // in1 ---> out1 
@@ -128,18 +169,14 @@ AudioStream *audioMixer::getOutputStream(uint8_t audio_ch)
 }
 AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch, uint8_t track)
 {
-
-  if    (type == STREAM_TYPE_MAIN){
-    return getOutputStream(audio_ch);
-  }
-
-  else if(type == STREAM_TYPE_SEND){
+  if(type == STREAM_TYPE_SEND){
     uint16_t send_num = (track*AUDIOMIXER_MAX_SENDS)+audio_ch;
     if(send_num < m_sends.size()){
       return m_sends.at(send_num);
     }
   }
-
+  //else return main Stream
+  return getOutputStream(audio_ch);
 }
 
 
@@ -178,6 +215,17 @@ float audioMixer::getPeak(void){
   }
 
   return m_peak_last;
+}
+
+
+
+void audioMixer::updateSend(uint32_t id, float val)
+{
+  if(usedParam() == NULL){return;}
+
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
+  printCallbackUpdate(val, "send");
+#endif  
 }
 
 
