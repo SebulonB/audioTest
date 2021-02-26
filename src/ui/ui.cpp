@@ -332,6 +332,7 @@ void UserInterface::updateFromIParser(void)
 
   i=0;
   dial = (uint8_t)DIAL_PAGE_PAN;
+  uint8_t send_dial = (uint8_t)DIAL_PAGE_SEND_CH1;
   for(auto mix : mixers){
     sprintf(str1_, "ui->iParse(%d): %6s %3.3f %3.3f\n",i, mix->getLabel(LABEL_SHORT),
                      mix->getParamValue(0,0), mix->getParamValue(0,1));
@@ -340,6 +341,10 @@ void UserInterface::updateFromIParser(void)
     p_volume_bars->setFaderVal(     i, mix->getParamValue(0,0), false, false );
     p_dial_pages[dial]->setDialVal( i, mix->getParamValue(0,1), false, false );
 
+    //send params
+    for(int x=0; x<6; x++){
+      p_dial_pages[send_dial+i]->setDialVal( x, mix->getParamValue(0,x+3), false, false );
+    }
     i++;
   }
 
@@ -460,7 +465,7 @@ void UserInterface::change_page(uint8_t p)
       dial = (uint8_t)DIAL_PAGE_SEND_CH1 + m_page_sub;   
       sprintf(str_, "send CH:%d", m_page_sub+1 );
       p_dial_pages[dial]->setActive(true);
-        updateFromIParser();
+      updateFromIParser();
       p_dial_pages[dial]->drawInfo(str_);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 

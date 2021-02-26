@@ -129,6 +129,11 @@ void AudioPatchControl::setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_
     Serial.print("\n");
   }
 
+  std::vector<audioDevice *> mixers;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, mixers);
+  if(mixers.size() <= p){return;}
+  mixers.at(p)->updateParam(0, ch+3, val);
+
 }
 
 void AudioPatchControl::setReverbParam(uint8_t ch)
