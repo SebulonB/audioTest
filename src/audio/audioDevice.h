@@ -12,7 +12,7 @@
 #include "audioDeviceHelpers.h"
 #include "../patches/handler/handler.h"
 
-//#define DEBUG_AUDIO_DEVICE
+#define DEBUG_AUDIO_DEVICE
 #define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
@@ -42,6 +42,11 @@ enum ID_TYPE
   ID_TYPE_DEVICE_DELAY_EFFEKT,
 };
 
+enum STREAM_TYPE {
+    STREAM_TYPE_MAIN,
+    STREAM_TYPE_SEND
+};
+
 // return label type
 enum LABEL_TYPE
 {
@@ -57,6 +62,153 @@ enum PARAM_UNIT
   UNIT_TIME,
   UNIT_BOOLEN,
   UNIT_DEZIBEL,
+};
+
+class audioDeviceParam;
+class audioDeviceIdGenerator;
+
+
+//        --------------
+//       | Aduio Device |
+//        --------------
+class audioDevice
+{
+  public:
+    audioDevice(){}
+    audioDevice(uint8_t cnt){
+      if(cnt >= MIXERC_MAX_CHANNELS){
+        cnt = MIXERC_MAX_CHANNELS;
+      }
+      m_mix_in_max_connections = cnt;
+    }
+    ~audioDevice(){};
+    
+    uint32_t     getId();
+    const char * getLabel(enum LABEL_TYPE type);
+    bool         isType(enum ID_TYPE type);
+
+    //should be used after init of m_devices
+    void setPatchInterface(patchHandler *ip){ipatches = ip;}    
+    void updateFromPatchInterface(void);
+    void saveToPatchInterface(void);
+
+    //Parameter Stuff
+    void updateParam(uint32_t id, float val);
+    void updateParam(uint32_t id, uint8_t index, float val);
+    float getParamValue(uint32_t id, uint8_t index);
+    float getParamValue(uint32_t id);
+
+    //Stream Connection
+    void setInputStreamExpansionCallback(std::function <void (audioDevice *, AudioStream *, uint8_t)> funcp);
+    int  setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in );  
+    int  setInputStream( audioDevice *pin, AudioStream * stream_in, uint8_t audio_ch_in );
+ 
+    virtual AudioStream *getOutputStream(uint8_t audio_ch);  
+    virtual AudioStream *getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch, uint8_t track){return NULL;}      
+
+    int getConCount(uint8_t ch);
+
+#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CALLBACK)
+    void printCallbackUpdate(float val, std::string s);
+#endif
+
+  protected:
+    const char *m_label_long{NULL};
+    const char *m_label_short{NULL};   
+
+    uint32_t m_id{0}; 
+
+    patchHandler *ipatches{NULL};
+
+    //Params
+    std::vector<audioDeviceParam *> m_params;   
+    audioDeviceParam * m_used_param = NULL;
+    audioDeviceParam * usedParam() {return m_used_param;}
+
+    //Audio Input
+    std::vector<audioMixerC *>  m_mix_in;
+    std::vector<int>            m_mix_in_connections;
+    int                         m_mix_in_max_connections{4};
+
+    //Audio Out
+    std::vector<audioMixerC *>  m_mix_out;
+
+    //Patch Cords
+    std::vector<AudioConnection*> m_cords;
+    const int m_max_channels{2}; //0:left / 1:rigth
+
+    //Input Stream Expansion
+    std::function <void (audioDevice *pin, 
+                         AudioStream *, 
+                         uint8_t audio_ch_in )> inputStreamExtras_callback {NULL};
+
+
+    //debugging
+#ifdef DEBUG_AUDIO_DEVICE
+    char str_[100];
+#endif  
+
+};
+
+
+//        --------------------
+//       | Aduio Device Param |
+//        --------------------
+class audioDeviceParam
+{
+  public:
+    audioDeviceParam(  uint32_t id, float min, float max, float init, enum PARAM_UNIT unit,
+                       const char * l_short, const char * l_long, std::function <void (uint32_t, float)> funcp )
+    { 
+      m_id      = id;
+      m_val_max = max;
+      m_val_min = min;
+      m_value   = init;
+      m_unit    = unit;
+
+      m_label_short = l_short;
+      m_label_long  = l_long;  
+
+      update_callback = funcp;
+    };
+
+    ~audioDeviceParam(){};
+    
+    //info
+    uint32_t getId();
+    const char * getLabel(enum LABEL_TYPE type);
+    bool  isType(enum ID_TYPE type);
+
+    //value/param
+    float getValue();       
+    void  set_getCallback(std::function <float (void)> funcp);  // getValue 'overload' 
+
+    float getValueScaled();
+    void  set_getScaledCallback(std::function <float (void)> funcp);
+   
+    float getValueScaledMax(){ return m_val_max; }
+    float getValueScaledMin(){ return m_val_min; }   
+
+    void  setValue(float val);
+
+  private:
+    const char *m_label_long{NULL};
+    const char *m_label_short{NULL};   
+
+    uint32_t m_id{0};
+
+    float m_val_max{1.};
+    float m_val_min{0.};
+    float m_value{0.};
+    float m_value_scaled{0.};
+    enum PARAM_UNIT m_unit{UNIT_PERCENT};
+    
+    //update callback audioEffekt
+    std::function <void (uint32_t, float)> update_callback {NULL};
+
+    std::function <float (void)>              get_callback {NULL};
+    std::function <float (void)>        getScaled_callback {NULL};
+
 };
 
 
@@ -92,340 +244,6 @@ class audioDeviceIdGenerator
 
   private:
     uint32_t m_id{1};
-};
-
-
-
-class audioDeviceParam
-{
-  public:
-    audioDeviceParam(  uint32_t id, float min, float max, float init, enum PARAM_UNIT unit,
-                       const char * l_short, const char * l_long, std::function <void (uint32_t, float)> funcp )
-    { 
-      m_id      = id;
-      m_val_max = max;
-      m_val_min = min;
-      m_value   = init;
-      m_unit    = unit;
-
-      m_label_short = l_short;
-      m_label_long  = l_long;  
-
-      update_callback = funcp;
-    };
-
-    ~audioDeviceParam(){};
-
-    uint32_t getId(){return m_id;}
-
-    const char * getLabel(enum LABEL_TYPE type)
-    {
-      if      (type == LABEL_SHORT){
-        if(m_label_short != NULL){
-          return m_label_short;
-        }
-      }
-      else if (type == LABEL_LONG){
-        if(m_label_long != NULL){
-          return m_label_long;
-        }
-      }     
-      return error_str;  
-    }
-
-    bool  isType(enum ID_TYPE type){
-      if(static_cast<enum ID_TYPE>(m_id>>16) == type){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }
-
-    float getValue(){          
-      if(get_callback == NULL){
-        return m_value;
-      }
-      return get_callback();
-    }      
-    void set_getCallback(std::function <float (void)> funcp){
-      get_callback = funcp;
-    }    
-
-    float getValueScaled(){    
-      if(getScaled_callback == NULL){
-        return m_value_scaled; 
-      }
-      return getScaled_callback();
-    }
-    void set_getScaledCallback(std::function <float (void)> funcp){
-      getScaled_callback = funcp;
-    }
-   
-    float getValueScaledMax(){ return m_val_max; }
-
-    float getValueScaledMin(){ return m_val_min; }   
-
-    void  setValue(float val){  
-      if(val >= -1.0 && val <= 1.0)
-      {
-        float scaled = m_val_min + (m_val_max - m_val_min)*val;
-        if( scaled >= m_val_min && scaled <= m_val_max )
-        {
-          m_value = val;          
-          m_value_scaled = scaled;       
-          if(update_callback != NULL){      
-            update_callback(m_id, val);
-          }
-        }
-      }
-    }
-
-  private:
-    const char *m_label_long{NULL};
-    const char *m_label_short{NULL};   
-
-    uint32_t m_id{0};
-
-    float m_val_max{1.};
-    float m_val_min{0.};
-    float m_value{0.};
-    float m_value_scaled{0.};
-    enum PARAM_UNIT m_unit{UNIT_PERCENT};
-    
-    //update callback audioEffekt
-    std::function <void (uint32_t, float)> update_callback {NULL};
-
-    std::function <float (void)>              get_callback {NULL};
-    std::function <float (void)>        getScaled_callback {NULL};
-
-};
-
-
-
-
-class audioDevice
-{
-  public:
-    audioDevice(){};
-    audioDevice(uint8_t cnt){
-      if(cnt >= MIXERC_MAX_CHANNELS){
-        cnt = MIXERC_MAX_CHANNELS;
-      }
-      m_mix_in_max_connections = cnt;
-    }
-
-    ~audioDevice(){};
-    
-    uint32_t getId(){return m_id;}
-
-    //should be used after init of m_devices
-    void setPatchInterface(patchHandler *ip){
-      ipatches = ip;
-    }    
-
-    void updateFromPatchInterface(void){
-      if(ipatches==NULL){return;}
-      for(auto param : m_params){
-        float val;
-        if(ipatches->getParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_SHORT), val)){
-          m_used_param = param;
-          param->setValue(val);
-          m_used_param = NULL;
-        }    
-      }
-    }
-
-    void saveToPatchInterface(void){
-      if(ipatches==NULL){return;}
-      for(auto param : m_params){
-        ipatches->saveParamValue(getLabel(LABEL_LONG), param->getLabel(LABEL_SHORT), param->getValue()); 
-      }      
-    }
-
-    const char * getLabel(enum LABEL_TYPE type)
-    {
-
-      if      (type == LABEL_SHORT){
-        if(m_label_short != NULL){
-          return m_label_short;
-        }
-      }
-      else if (type == LABEL_LONG){
-        if(m_label_long != NULL){
-          return m_label_long;
-        }
-      }     
-      
-      return error_str;  
-    }
-
-    bool  isType(enum ID_TYPE type){
-      if(static_cast<enum ID_TYPE>(m_id>>16) == type){
-        return true;
-      }
-      else{
-        return false;
-      }
-    }    
-
-    void updateParam(uint32_t id, float val)
-    {
-      for(auto param : m_params){
-        if(id == param->getId()){
-          m_used_param = param;
-          param->setValue(val);
-        }     
-      }
-      //done
-      m_used_param = NULL;
-    }
-
-    void updateParam(uint32_t id, uint8_t index, float val){
-      if(index>=m_params.size())
-      {
-        //use id instead
-        updateParam(id, val);
-      }
-      else
-      {
-        m_used_param = m_params.at(index);
-        m_params.at(index)->setValue(val);
-        m_used_param = NULL;
-      }
-    }
-
-    float getParamValue(uint32_t id, uint8_t index){
-      if(index>=m_params.size())
-      {
-        for(auto param : m_params){
-          if(param->getId() == id){
-            return param->getValue();
-          }
-        }
-      }
-
-      return m_params.at(index)->getValue();   
-    }
-
-    float getParamValue(uint32_t id){
-      for(auto param : m_params){
-        if(param->getId() == id){
-          return param->getValue();
-        }
-      }
-      return 0.;
-    }
-
-    void setInputStreamExpansionCallback(std::function <void (audioDevice *, uint8_t, uint8_t)> funcp){
-      inputStreamExtras_callback = funcp;
-    }
-
-    int setInputStream( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in )
-    {
-      if(pin == NULL) {
-#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
-        sprintf( str_, "setInputCord: no audio device handed over\n");
-        Serial.print(str_);
-#endif
-        return -1;
-      }
-      AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
-      int cord_c = 0xff; 
-
-      if(    audio_ch_in < m_mix_in.size() 
-          && audio_ch_in < m_mix_in_connections.size() )
-      {
-        cord_c = m_mix_in_connections.at(audio_ch_in);
-        if( cord_c < m_mix_in_max_connections)
-        {
-          m_cords.push_back(new AudioConnection( *stream_in, 0,
-                                                 *m_mix_in.at(audio_ch_in), cord_c ));
-          
-          m_mix_in_connections.at(audio_ch_in) += 1;
-
-#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
-          sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s ch(%d) \n",
-                          pin->getLabel(LABEL_SHORT), audio_ch_out, 
-                          getLabel(LABEL_SHORT), audio_ch_in);
-          Serial.print(str_);
-#endif
-          if(inputStreamExtras_callback != NULL){
-            inputStreamExtras_callback(pin, audio_ch_out, audio_ch_in);
-          }
-          return 0;
-        }
-      }
-
-#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
-        sprintf( str_, "setInputCord: could not create ( %s -> %s ) audioch(%d|%d|%d) cord(%d|%d) \n", 
-                         pin->getLabel(LABEL_SHORT), getLabel(LABEL_SHORT), 
-                         audio_ch_in, m_mix_in.size(), m_mix_in_connections.size(),
-                         cord_c, m_mix_in_max_connections);
-        Serial.print(str_);
-#endif
-      return -1;
-    }
-
-    virtual AudioStream *getOutputStream(uint8_t audio_ch);  
-
-    int getConCount(uint8_t ch){
-      if(ch<m_mix_in_connections.size()){
-        return m_mix_in_connections.at(ch);
-      }
-      return 0;
-    } 
-
-#if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CALLBACK)
-    void printCallbackUpdate(float val, std::string s){
-      if(m_used_param != NULL){
-        sprintf(str_, "CB Updated( %-10s ): %6s  %6s ( %1.3f | %3.3f)\n", 
-                        s.c_str(), m_label_long, 
-                        m_used_param->getLabel(LABEL_LONG),
-                        val, m_used_param->getValueScaled() );
-        Serial.print(str_);
-      }
-    }
-#endif
-
-  protected:
-    const char *m_label_long{NULL};
-    const char *m_label_short{NULL};   
-
-    uint32_t m_id{0}; 
-
-    patchHandler *ipatches{NULL};
-
-
-    //Params
-    std::vector<audioDeviceParam *> m_params;   
-    audioDeviceParam * m_used_param = NULL;
-
-    //Audio Input
-    std::vector<audioMixerC *>  m_mix_in;
-    std::vector<int>            m_mix_in_connections;
-    int                         m_mix_in_max_connections{4};
-
-    //Audio Out
-    std::vector<audioMixerC *>  m_mix_out;
-
-    //Patch Cords
-    std::vector<AudioConnection*> m_cords;
-
-    const int m_max_channels{2}; //0:left / 1:rigth
-
-    audioDeviceParam * usedParam() {return m_used_param;}
-
-    std::function <void (audioDevice *pin, 
-                         uint8_t audio_ch_out, 
-                         uint8_t audio_ch_in )> inputStreamExtras_callback {NULL};
-
-
-    //debugging
-#ifdef DEBUG_AUDIO_DEVICE
-    char str_[100];
-#endif  
-
 };
 
 

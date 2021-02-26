@@ -55,6 +55,12 @@ AudioStream *audioADC::getOutputStream(uint8_t audio_ch)
   {
     return m_amps.at(audio_ch);
   }
+
+#if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_ADC)
+  sprintf(str_, "adc: getStream Error: %d ch_max(%d) | %d type(%d)\n",
+          audio_ch, m_amps.size(), m_type, AUDIO_ADC_I2S_HEX);
+  Serial.print(str_);
+#endif    
   return NULL;
 }
 

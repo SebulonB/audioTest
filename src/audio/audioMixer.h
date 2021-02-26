@@ -25,10 +25,6 @@ const char aef_mixer6_label_long[]  PROGMEM = "mixer_6";
 
 class audioMixer : public audioDevice
 {
-  enum STREAM_TYPE {
-      STREAM_TYPE_MAIN,
-      STREAM_TYPE_SEND
-  };
 
   public:
     audioMixer(audioDeviceIdGenerator *idgen, const char * l_short, const char * l_long);
@@ -44,7 +40,7 @@ class audioMixer : public audioDevice
     float getPeak();
     AudioAnalyzePeak  *m_peak{NULL};  
     float m_peak_last{0.};
-    void  setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in);
+    void  setInputExtra( audioDevice *pin, AudioStream * stream_in, uint8_t audio_ch_in);
 
     //send effekts
     std::vector<AudioAmplifier *> m_sends; 

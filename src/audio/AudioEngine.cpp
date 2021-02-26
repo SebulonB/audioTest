@@ -75,87 +75,46 @@ audioEngine::audioEngine()
                                              aef_delay5_label_long) );                                             
 
   //connect
-  //auto adc = m_devices.at(0); 
-   m_devices.at(1); 
-  
-  //
-  // adc -> mix -> delay -> dac
-  //
-  // ch:0 left | ch:1 rigth
-  //
   uint8_t mix_cnt = 0;
-
   std::vector<audioDevice *> delays;
   getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delays);
 
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
-      
-      //connect adc with mixer
-      mix->setInputStream(adc, mix_cnt, 0);
-      mix->setInputStream(adc, mix_cnt, 1);
 
-      //connect mixer with master
-      dac->setInputStream(mix, 0, 0 );
-      dac->setInputStream(mix, 1, 1 );    
+      Serial.print("  --- |Create Mixer Channel: ");
+      Serial.print(mix_cnt);
+      Serial.print(" | ---\n");
+      
+      //connect adc to mixer
+      mix->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 0);
+      mix->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 1);
+
+      //connect mixer to master
+      dac->setInputStream(mix, static_cast<uint8_t>(0), 0 );
+      dac->setInputStream(mix, static_cast<uint8_t>(1), 1 );    
     
-      //connect mixer ->delay-> master
-      
-      // Mix[0] -----> delay[0]
-      // Mix[1] --|
-      //
-      if(mix_cnt==0 || mix_cnt==1) 
-      {
-        delays.at(0)->setInputStream(mix, 0, 0);
-        delays.at(0)->setInputStream(mix, 1, 1);
-        dac->setInputStream(delays.at(0), 0, 0 );
-        dac->setInputStream(delays.at(0), 1, 1 );     
-         
+      //connect mixer send with delays
+      for( unsigned x=0; x<AUDIOMIXER_MAX_SENDS; x++){
+        if(x<delays.size()){
+          //left
+          AudioStream * stream = mix->getOutputStream(STREAM_TYPE_SEND, 0, x);
+          delays.at(x)->setInputStream(mix, stream, 0);
+          //right
+          stream               = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
+          delays.at(x)->setInputStream(mix, stream, 1);
+        }
       }
-      //
-      // Mix[2] -----> delay[1]
-      //   
-      else if(mix_cnt == 2)
-      {
-        delays.at(1)->setInputStream(mix, 0, 0);
-        delays.at(1)->setInputStream(mix, 1, 1);
-        dac->setInputStream(delays.at(1), 0, 0 );
-        dac->setInputStream(delays.at(1), 1, 1 );     
-      }
-      //
-      // Mix[3] -----> delay[2]
-      //   
-      else if(mix_cnt == 3)
-      {
-        delays.at(2)->setInputStream(mix, 0, 0);
-        delays.at(2)->setInputStream(mix, 1, 1);
-        dac->setInputStream(delays.at(2), 0, 0 );
-        dac->setInputStream(delays.at(2), 1, 1 );     
-      }
-      //
-      // Mix[4] -----> delay[3]
-      //   
-      else if(mix_cnt == 4)
-      {
-        delays.at(3)->setInputStream(mix, 0, 0);
-        delays.at(3)->setInputStream(mix, 1, 1);
-        dac->setInputStream(delays.at(3), 0, 0 );
-        dac->setInputStream(delays.at(3), 1, 1 );     
-      }
-      //
-      // Mix[5] -----> delay[4]
-      //   
-      else if(mix_cnt == 4)
-      {
-        delays.at(4)->setInputStream(mix, 0, 0);
-        delays.at(4)->setInputStream(mix, 1, 1);
-        dac->setInputStream(delays.at(4), 0, 0 );
-        dac->setInputStream(delays.at(4), 1, 1 );     
-      }
-
-       mix_cnt++;
+      mix_cnt++;
     }
   }
+
+  //connect delay to master
+  for (auto delay : delays){
+    dac->setInputStream(delay, static_cast<uint8_t>(0), 0 );
+    dac->setInputStream(delay, static_cast<uint8_t>(1), 1 );  
+  }
+
 
 
 

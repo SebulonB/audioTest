@@ -86,7 +86,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
 
 }
 
-void audioMixer::setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t audio_ch_in)
+void audioMixer::setInputExtra( audioDevice *pin, AudioStream * stream_in, uint8_t audio_ch_in)
 {
   if(pin == NULL) {
 #if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
@@ -105,13 +105,13 @@ void audioMixer::setInputExtra( audioDevice *pin, uint8_t audio_ch_out, uint8_t 
     return;
   }
 
-  AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
+  //AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
   m_cords.push_back(new AudioConnection(*stream_in, 0,
                                         *m_peak, 0 ));
   
 #if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
-    sprintf( str_, "setInputCord:  %6s ch(%d) -> %6s:peak \n", 
-                      pin->getLabel(LABEL_SHORT), audio_ch_out,
+    sprintf( str_, "setInputCord:  %6s -> %6s:peak \n", 
+                      pin->getLabel(LABEL_SHORT),
                       getLabel(LABEL_SHORT));
     Serial.print(str_);
 #endif
