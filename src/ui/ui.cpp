@@ -13,8 +13,8 @@
 #include "ui.h"
 
 
-#define DEBUG_USAGE
-#define DEBUG_KNOB
+//#define DEBUG_USAGE
+//#define DEBUG_KNOB
 
 
 //
