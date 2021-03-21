@@ -15,12 +15,12 @@ public:
         m_cnt = cnt;
     
 		for (int i=0; i<MIXERC_MAX_CHANNELS; i++){ 
-          multiplier[i] = 65536;
+          multiplier[i] = 65536.0f;
         }
 	}
 	virtual void update(void);
 	void gain(unsigned int channel, float gain) {
-		if (m_cnt >= 4) return;
+		if (channel >= m_cnt) return;
 		if (gain > 32767.0f) gain = 32767.0f;
 		else if (gain < -32767.0f) gain = -32767.0f;
 		multiplier[channel] = gain * 65536.0f; // TODO: proper roundoff?
