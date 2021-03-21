@@ -108,6 +108,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   for(int i=0; i<m_max_channels; i++)
   {
     audioMixerC *in  = new audioMixerC(4);
+    //for(int x=0;i<4;i++){in->gain(x, 0.0);}
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
  
@@ -184,22 +185,19 @@ void audioMixer::updateVolume(uint32_t id, float val)
 {
 
   //0:left | 1:right
-  if(m_mix_in.size() == 2){
+  float vol = m_params.at(0)->getValueScaled();    
+  float pan = m_params.at(1)->getValueScaled();
 
-    float vol = m_params.at(0)->getValueScaled();    
-    float pan = m_params.at(1)->getValueScaled();
-
-    for(int i=0; i<m_mix_in_max_connections; i++){
-      if(pan<=0.){
-        m_mix_in.at(0)->gain( i, vol );
-        m_mix_in.at(1)->gain( i, vol*(1.-(-pan)) ); //pan -1. 0 
-      }
-      else{
-        m_mix_in.at(0)->gain( i, vol*(1.-pan) );    //pan  0. 1 
-        m_mix_in.at(1)->gain( i, vol ); 
-      } 
-    }    
-  }
+  for(unsigned i=0; i<m_mix_in.size(); i++){
+    if(pan<=0.){
+      m_mix_in.at(0)->gain( i, vol );
+      m_mix_in.at(1)->gain( i, vol*(1.-(-pan)) ); //pan -1. 0 
+    }
+    else{
+      m_mix_in.at(0)->gain( i, vol*(1.-pan) );    //pan  0. 1 
+      m_mix_in.at(1)->gain( i, vol ); 
+    } 
+  }  
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   printCallbackUpdate(val, "volume/pan");
