@@ -95,26 +95,22 @@ audioEngine::audioEngine()
       dac->setInputStream(mix, static_cast<uint8_t>(1), 1 );    
     
       //connect mixer send with delays
-      // for( unsigned x=0; x<AUDIOMIXER_MAX_SENDS; x++){
-      //   if(x<delays.size()){
-      //     //left
-      //     AudioStream * stream = mix->getOutputStream(STREAM_TYPE_SEND, 0, x);
-      //     delays.at(x)->setInputStream(mix, stream, 0);
-      //     //right
-      //     stream               = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
-      //     delays.at(x)->setInputStream(mix, stream, 1);
-      //   }
-      // }
+      for( unsigned x=0; x<AUDIOMIXER_MAX_SENDS; x++){
+        if(x<delays.size()){
+          //left
+          AudioStream * left  = mix->getOutputStream(STREAM_TYPE_SEND, 0, x);
+          delays.at(x)->setInputStream(mix, left, 0);
+          //right
+          AudioStream * right = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
+          delays.at(x)->setInputStream(mix, right, 1);
+          //master
+          dac->setInputStream(delays.at(x), static_cast<uint8_t>(0), 0 );
+          dac->setInputStream(delays.at(x), static_cast<uint8_t>(1), 1 );  
+        }
+      }
       mix_cnt++;
     }
   }
-
-  //connect delay to master
-  // for (auto delay : delays){
-  //   dac->setInputStream(delay, static_cast<uint8_t>(0), 0 );
-  //   dac->setInputStream(delay, static_cast<uint8_t>(1), 1 );  
-  // }
-
 
 
 

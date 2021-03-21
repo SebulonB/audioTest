@@ -64,37 +64,37 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                             std::placeholders::_1, std::placeholders::_2 );        
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendA, ad_label_sendA,
                                             cb_send ) );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendB, ad_label_sendB,
                                             cb_send ) );
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendC, ad_label_sendC,
                                             cb_send ) );                  
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendD, ad_label_sendD,
                                             cb_send ) );                  
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendE, ad_label_sendE,
                                             cb_send ) );                  
 
   m_params.push_back( new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
-                                            0, 1, .0,
+                                            0, 1, .0, 
                                             UNIT_PERCENT,
                                             ad_label_sendF, ad_label_sendF,
                                             cb_send ) );                                                                                                                                      
@@ -171,13 +171,16 @@ AudioStream *audioMixer::getOutputStream(uint8_t audio_ch)
 AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch, uint8_t track)
 {
   if(type == STREAM_TYPE_SEND){
-    uint16_t send_num = (track*AUDIOMIXER_MAX_SENDS)+audio_ch;
+    uint16_t send_num = (audio_ch*AUDIOMIXER_MAX_SENDS)+track;
     if(send_num < m_sends.size()){
       return m_sends.at(send_num);
     }
   }
-  //else return main Stream
-  return getOutputStream(audio_ch);
+  else if(type == STREAM_TYPE_MAIN){
+    return getOutputStream(audio_ch);
+  }
+  
+  return NULL;
 }
 
 
@@ -220,6 +223,50 @@ float audioMixer::getPeak(void){
 void audioMixer::updateSend(uint32_t id, float val)
 {
   if(usedParam() == NULL){return;}
+  float vol = usedParam()->getValueScaled(); 
+
+  uint32_t line=0;
+  //SendA
+  if     (strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendA) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
+
+  //SendB
+  else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendB) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
+
+  //SendC
+  else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendC) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
+
+  //SendD
+  else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendD) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
+
+  //SendE
+  else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendE) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
+
+  //SendF
+  else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendF) == 0){
+    if(m_sends.size() > line){
+      m_sends.at(line++)->gain(vol);
+    }
+  }
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   printCallbackUpdate(val, "send");

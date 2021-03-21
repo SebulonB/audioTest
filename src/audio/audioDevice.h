@@ -159,6 +159,23 @@ class audioDeviceParam
       update_callback = funcp;
     };
 
+    audioDeviceParam(  uint32_t id, float min, float max, float init, uint32_t index, enum PARAM_UNIT unit,
+                       const char * l_short, const char * l_long, std::function <void (uint32_t, float)> funcp )
+    { 
+      m_id      = id;
+      m_index   = index;
+      m_val_max = max;
+      m_val_min = min;
+      m_value   = init;
+      m_unit    = unit;
+
+      m_label_short = l_short;
+      m_label_long  = l_long;  
+
+      update_callback = funcp;
+    };
+
+
     ~audioDeviceParam(){};
     
     //info
@@ -183,6 +200,7 @@ class audioDeviceParam
     const char *m_label_short{NULL};   
 
     uint32_t m_id{0};
+    uint32_t m_index{0};
 
     float m_val_max{1.};
     float m_val_min{0.};
