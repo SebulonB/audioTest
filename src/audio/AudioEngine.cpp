@@ -82,7 +82,7 @@ audioEngine::audioEngine()
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
 
-      Serial.print("  --- |Create Mixer Channel: ");
+      Serial.print("\n  --- |Create Mixer Channel: ");
       Serial.print(mix_cnt);
       Serial.print(" | ---\n");
       
@@ -103,16 +103,18 @@ audioEngine::audioEngine()
           //right
           AudioStream * right = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
           delays.at(x)->setInputStream(mix, right, 1);
-          //master
-          dac->setInputStream(delays.at(x), static_cast<uint8_t>(0), 0 );
-          dac->setInputStream(delays.at(x), static_cast<uint8_t>(1), 1 );  
         }
       }
       mix_cnt++;
     }
   }
 
-
+  //delays to master
+  for( auto delay : delays){
+    //master
+    dac->setInputStream(delay, static_cast<uint8_t>(0), 0 );
+    dac->setInputStream(delay, static_cast<uint8_t>(1), 1 );  
+  }
 
 #ifdef AUDIO_ENGINE_DEBUG
   sprintf(str_, "Audio Engine Init: devices(%d)\n", m_devices.size());

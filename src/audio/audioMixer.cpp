@@ -107,7 +107,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   //
   for(int i=0; i<m_max_channels; i++)
   {
-    audioMixerC *in  = new audioMixerC(4);
+    audioMixerC *in  = new audioMixerC(m_max_inputs);
     //for(int x=0;i<4;i++){in->gain(x, 0.0);}
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
@@ -191,15 +191,17 @@ void audioMixer::updateVolume(uint32_t id, float val)
   float vol = m_params.at(0)->getValueScaled();    
   float pan = m_params.at(1)->getValueScaled();
 
-  for(unsigned i=0; i<m_mix_in.size(); i++){
-    if(pan<=0.){
-      m_mix_in.at(0)->gain( i, vol );
-      m_mix_in.at(1)->gain( i, vol*(1.-(-pan)) ); //pan -1. 0 
-    }
-    else{
-      m_mix_in.at(0)->gain( i, vol*(1.-pan) );    //pan  0. 1 
-      m_mix_in.at(1)->gain( i, vol ); 
-    } 
+  for(unsigned i=0; i<m_max_inputs; i++){
+    m_mix_in.at(0)->gain( i, vol );
+    m_mix_in.at(1)->gain( i, vol );
+    // if(pan<=0.){
+    //   m_mix_in.at(0)->gain( i, vol );
+    //   m_mix_in.at(1)->gain( i, vol*(1.-(-pan)) ); //pan -1. 0 
+    // }
+    // else{
+    //   m_mix_in.at(0)->gain( i, vol*(1.-pan) );    //pan  0. 1 
+    //   m_mix_in.at(1)->gain( i, vol ); 
+    // } 
   }  
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
@@ -225,46 +227,45 @@ void audioMixer::updateSend(uint32_t id, float val)
   if(usedParam() == NULL){return;}
   float vol = usedParam()->getValueScaled(); 
 
-  uint32_t line=0;
   //SendA
   if     (strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendA) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() >= 1){
+      m_sends.at(0)->gain(vol);
     }
   }
 
   //SendB
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendB) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() >= 2){
+      m_sends.at(1)->gain(vol);
     }
   }
 
   //SendC
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendC) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() >= 3){
+      m_sends.at(2)->gain(vol);
     }
   }
 
   //SendD
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendD) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() > 4){
+      m_sends.at(3)->gain(vol);
     }
   }
 
   //SendE
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendE) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() >= 5){
+      m_sends.at(4)->gain(vol);
     }
   }
 
   //SendF
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendF) == 0){
-    if(m_sends.size() > line){
-      m_sends.at(line++)->gain(vol);
+    if(m_sends.size() >= 6){
+      m_sends.at(5)->gain(vol);
     }
   }
 

@@ -15,7 +15,7 @@ public:
         m_cnt = cnt;
     
 		for (int i=0; i<MIXERC_MAX_CHANNELS; i++){ 
-          multiplier[i] = 65536.0f;
+          multiplier[i] = 65536;
         }
 	}
 	virtual void update(void);
