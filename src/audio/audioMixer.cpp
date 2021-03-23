@@ -108,12 +108,14 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   for(int i=0; i<m_max_channels; i++)
   {
     audioMixerC *in  = new audioMixerC(m_max_inputs);
-    //for(int x=0;i<4;i++){in->gain(x, 0.0);}
+    //for(int x=0;i<m_max_inputs;i++){in->gain(x, 0.0);} //mute
+
     m_mix_in.push_back(in);    
     m_mix_in_connections.push_back(0);
  
     for(int x=0; x<AUDIOMIXER_MAX_SENDS; x++){
       AudioAmplifier *amp = new AudioAmplifier();
+      amp->gain(0.);
       m_sends.push_back(amp);
       m_cords.push_back(new AudioConnection( *in, 0, *amp, 0));
     }
@@ -122,7 +124,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
 
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
-  sprintf(str_, "created mixer: device( 0x%08x | %s )\n", static_cast<unsigned int>(m_id), m_label_long);
+  sprintf(str_, "created mixer:  %s  with %d sends \n", m_label_long, m_sends.size());
   Serial.print(str_);
 #endif    
 
@@ -172,6 +174,8 @@ AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch
 {
   if(type == STREAM_TYPE_SEND){
     uint16_t send_num = (audio_ch*AUDIOMIXER_MAX_SENDS)+track;
+    sprintf(str_, "get Stream: %d\n", send_num);
+    Serial.print(str_);
     if(send_num < m_sends.size()){
       return m_sends.at(send_num);
     }
@@ -191,18 +195,20 @@ void audioMixer::updateVolume(uint32_t id, float val)
   float vol = m_params.at(0)->getValueScaled();    
   float pan = m_params.at(1)->getValueScaled();
 
-  for(unsigned i=0; i<m_max_inputs; i++){
-    m_mix_in.at(0)->gain( i, vol );
-    m_mix_in.at(1)->gain( i, vol );
-    // if(pan<=0.){
-    //   m_mix_in.at(0)->gain( i, vol );
-    //   m_mix_in.at(1)->gain( i, vol*(1.-(-pan)) ); //pan -1. 0 
-    // }
-    // else{
-    //   m_mix_in.at(0)->gain( i, vol*(1.-pan) );    //pan  0. 1 
-    //   m_mix_in.at(1)->gain( i, vol ); 
-    // } 
-  }  
+  if(pan<=0.){
+    float p = vol*(1.-(-pan)); //pan -1. 0 
+    for(unsigned i=0; i<m_max_inputs; i++){
+      m_mix_in.at(0)->gain( i, vol );
+      m_mix_in.at(1)->gain( i, p   );
+    }
+  }
+  else{
+    float p = vol*(1.-( pan)); // 0. 1.
+    for(unsigned i=0; i<m_max_inputs; i++){
+      m_mix_in.at(0)->gain( i, p   );
+      m_mix_in.at(1)->gain( i, vol );      
+    }    
+  } 
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   printCallbackUpdate(val, "volume/pan");
@@ -229,43 +235,61 @@ void audioMixer::updateSend(uint32_t id, float val)
 
   //SendA
   if     (strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendA) == 0){
-    if(m_sends.size() >= 1){
-      m_sends.at(0)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 0 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }
     }
   }
 
   //SendB
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendB) == 0){
-    if(m_sends.size() >= 2){
-      m_sends.at(1)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 1 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }
     }
   }
 
   //SendC
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendC) == 0){
-    if(m_sends.size() >= 3){
-      m_sends.at(2)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 2 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }
     }
   }
 
   //SendD
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendD) == 0){
-    if(m_sends.size() > 4){
-      m_sends.at(3)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 3 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }       
     }
   }
 
   //SendE
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendE) == 0){
-    if(m_sends.size() >= 5){
-      m_sends.at(4)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 4 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }  
     }
   }
 
   //SendF
   else if(strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendF) == 0){
-    if(m_sends.size() >= 6){
-      m_sends.at(5)->gain(vol);
+    for(int i=0; i<m_max_channels; i++){   
+      unsigned ch = 5 + i*AUDIOMIXER_MAX_SENDS;
+      if(m_sends.size() > ch){   
+        m_sends.at(ch)->gain(vol);
+      }
     }
   }
 

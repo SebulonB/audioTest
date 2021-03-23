@@ -83,7 +83,7 @@ audioEngine::audioEngine()
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
 
       Serial.print("\n  --- |Create Mixer Channel: ");
-      Serial.print(mix_cnt);
+      Serial.print(mix_cnt+1);
       Serial.print(" | ---\n");
       
       //connect adc to mixer
