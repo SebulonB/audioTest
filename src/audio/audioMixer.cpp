@@ -10,6 +10,7 @@
 
 #include "audioEffekt.h"
 #include "audioDevice.h"
+#include "vu_lookup.h"
 
 
 
@@ -236,7 +237,10 @@ float audioMixer::getPeak(void){
   if(m_peak == NULL){return 0.5;}
 
   if(m_peak->available()){
-    m_peak_last = m_peak->read();
+    float v = m_peak->read()*100.;
+    if     (v<0.)   {v=0.;}
+    else if(v>100.) {v=100.;}
+    m_peak_last = vu_lookup[static_cast<unsigned>(v)];
   }
 
   return m_peak_last;
