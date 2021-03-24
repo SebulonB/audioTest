@@ -13,6 +13,8 @@
 
 #define DEBUG_AUDIO_EFFEKT_DELAY
 
+#define DELAY_MAX_INPUTS 8
+
 
 /*
 
@@ -93,8 +95,8 @@ audioEffektDelay::audioEffektDelay( audioDeviceIdGenerator *idgen,
   //generate audio patch
   for(int i=0; i<2; i++){
 
-    audioMixerC *in  = new audioMixerC(4);
-    for(int i=0; i<4;i++){in->gain(i, 1.);}
+    audioMixerC *in  = new audioMixerC(DELAY_MAX_INPUTS);
+    for(int i=0; i<DELAY_MAX_INPUTS;i++){in->gain(i, 1.);}
     m_mix_in.push_back(in);
     m_mix_in_connections.push_back(0);
 

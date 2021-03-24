@@ -174,11 +174,10 @@ AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch
 {
   if(type == STREAM_TYPE_SEND){
     uint16_t send_num = (audio_ch*AUDIOMIXER_MAX_SENDS)+track;
-    sprintf(str_, "get Stream: %d\n", send_num);
-    Serial.print(str_);
     if(send_num < m_sends.size()){
       return m_sends.at(send_num);
     }
+    return NULL;
   }
   else if(type == STREAM_TYPE_MAIN){
     return getOutputStream(audio_ch);
@@ -194,6 +193,23 @@ void audioMixer::updateVolume(uint32_t id, float val)
   //0:left | 1:right
   float vol = m_params.at(0)->getValueScaled();    
   float pan = m_params.at(1)->getValueScaled();
+
+  //
+  //https://www.dr-lex.be/info-stuff/volumecontrols.html
+  //
+  //   Dynamic range |     a     |  	b 	 |  Approximation
+  //     50 dB       | 3.1623e-3 |	5.757  |  x3
+  //     60 dB 	     | 1e-3 	   |  6.908  |	x4
+  //     70 dB 	     | 3.1623e-4 |	8.059  |	x5
+  //     80 dB 	     | 1e-4 	   |  9.210  |	x6
+  //     90 dB 	     | 3.1623e-5 |	10.36  |	x6
+  //    100 dB 	     | 1e-5 	   |  11.51  |	x7
+  //   
+  //   Values for a and b in the equation a·exp(b·x)
+  //
+
+  float amp = 0.001f * exp(6.908*vol);
+  if(vol < 0.1f) {amp *= vol*10.f;} //silence for 0.
 
   if(pan<=0.){
     float p = vol*(1.-(-pan)); //pan -1. 0 
@@ -233,12 +249,15 @@ void audioMixer::updateSend(uint32_t id, float val)
   if(usedParam() == NULL){return;}
   float vol = usedParam()->getValueScaled(); 
 
+  //logaritmic like mainslider?
+  float amp = vol;
+
   //SendA
   if     (strcmp(usedParam()->getLabel(LABEL_SHORT ), ad_label_sendA) == 0){
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 0 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }
     }
   }
@@ -248,7 +267,7 @@ void audioMixer::updateSend(uint32_t id, float val)
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 1 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }
     }
   }
@@ -258,7 +277,7 @@ void audioMixer::updateSend(uint32_t id, float val)
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 2 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }
     }
   }
@@ -268,7 +287,7 @@ void audioMixer::updateSend(uint32_t id, float val)
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 3 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }       
     }
   }
@@ -278,7 +297,7 @@ void audioMixer::updateSend(uint32_t id, float val)
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 4 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }  
     }
   }
@@ -288,7 +307,7 @@ void audioMixer::updateSend(uint32_t id, float val)
     for(int i=0; i<m_max_channels; i++){   
       unsigned ch = 5 + i*AUDIOMIXER_MAX_SENDS;
       if(m_sends.size() > ch){   
-        m_sends.at(ch)->gain(vol);
+        m_sends.at(ch)->gain(amp);
       }
     }
   }
