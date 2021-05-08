@@ -39,8 +39,12 @@ class audioMixer : public audioDevice
     
     //peak calc
     float getPeak();
+    float getRMS();
     AudioAnalyzePeak  *m_peak{NULL};  
+    AudioAnalyzeRMS   *m_rms{NULL};
     float m_peak_last{0.};
+    float m_rms_last{0.};
+
     void  setInputExtra( audioDevice *pin, AudioStream * stream_in, uint8_t audio_ch_in);
 
     //send effekts

@@ -60,6 +60,23 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
   peak->set_getCallback(cb_getpeak);                                             
   m_params.push_back( peak );
 
+  //read RMS as Param
+  auto cb_getrms = std::bind( &audioMixer::getRMS, this);
+  auto rms = new audioDeviceParam( idgen->generateID(ID_TYPE_PARAM),
+                                            0, 1, .0,
+                                            UNIT_DEZIBEL,
+                                            NULL, NULL,
+                                            NULL );
+
+  auto cb_rms = std::bind( &audioMixer::setInputExtra, this,
+                             std::placeholders::_1, 
+                             std::placeholders::_2,
+                             std::placeholders::_3 );
+  setInputStreamExpansionCallback(cb_rms);
+
+  peak->set_getCallback(cb_getrms);                                             
+  m_params.push_back( rms );
+
   //SendA to SendF  (1 .. 6)
   auto cb_send = std::bind( &audioMixer::updateSend, this, 
                             std::placeholders::_1, std::placeholders::_2 );        
@@ -122,7 +139,7 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
     }
   }
   m_peak = new  AudioAnalyzePeak();
-
+  m_rms  = new  AudioAnalyzeRMS();
 
 #if defined(DEBUG_AUDIO_DEVICE ) && defined(DEBUG_AUDIO_MIXER)
   sprintf(str_, "created mixer:  %s  with %d sends \n", m_label_long, m_sends.size());
@@ -153,9 +170,12 @@ void audioMixer::setInputExtra( audioDevice *pin, AudioStream * stream_in, uint8
   //AudioStream * stream_in = pin->getOutputStream(audio_ch_out);
   m_cords.push_back(new AudioConnection(*stream_in, 0,
                                         *m_peak, 0 ));
+
+  m_cords.push_back(new AudioConnection(*stream_in, 0,
+                                        *m_rms, 0 ));                                      
   
 #if defined(DEBUG_AUDIO_DEVICE) && defined(DEBUG_AUDIO_DEVICE_CORDS)
-    sprintf( str_, "setInputCord:  %6s -> %6s:peak \n", 
+    sprintf( str_, "setInputCord:  %6s -> %6s:peak | peak \n", 
                       pin->getLabel(LABEL_SHORT),
                       getLabel(LABEL_SHORT));
     Serial.print(str_);
@@ -244,6 +264,20 @@ float audioMixer::getPeak(void){
   }
 
   return m_peak_last;
+}
+
+float audioMixer::getRMS(void){
+
+  if(m_rms == NULL){return 0.5;}
+
+  if(m_rms->available()){
+    float v = m_rms->read()*100.;
+    if     (v<0.)   {v=0.;}
+    else if(v>100.) {v=100.;}
+    m_rms_last = vu_lookup[static_cast<unsigned>(v)];
+  }
+
+  return m_rms_last;
 }
 
 

@@ -228,7 +228,7 @@ void UserInterface::do_stuff()
   //get peaks
   int i=0;
   for(auto mix : mixers){
-    val = mix->getParamValue(0, 2);//Peak
+    val = mix->getParamValue(0, 2);//
     updateBars(i++, val);
   }
 
