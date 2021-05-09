@@ -90,22 +90,34 @@ void AudioPatchControl::updateInputMixer(uint8_t ch)
 
 }
 
-void AudioPatchControl::setHighPass(uint8_t ch)
+void AudioPatchControl::setFilterParam(enum UserInterface::DIAL_PAGE page, uint8_t ch)
 {
   if(ch>=6){return;}
   if(p_ui == NULL){return;}
 
-  // float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_HIGHPASS,ch);
-  // float filter = 35 + val*1500.;
-  // if(m_debug){
-  //   Serial.print("HighPass: ");
-  //   Serial.print(ch);
-  //   Serial.print(" | ");
-  //   Serial.print(val);
-  //   Serial.print(" | ");
-  //   Serial.print(filter);      
-  //   Serial.print("\n");
-  // }
+  float val = p_ui->getDialVal(page,ch);
+  uint8_t p = (uint8_t)page - (uint8_t)UserInterface::DIAL_PAGE_FILTER_CH1;//count from 0
+  //float vol = p_ui->getFaderVal(p);
+
+  if(m_debug){
+    Serial.print("Filter Effect: ");
+    Serial.print(ch);
+    Serial.print(" | ");
+    Serial.print(p);
+    Serial.print(" | ");  
+    Serial.print(val);     
+    Serial.print("\n");
+  }
+
+  std::vector<audioDevice *> device;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_FILTER, device);  
+
+  if(ch>=0 && ch<=1)
+  {
+    if(p<device.size()){    
+      device.at(p)->updateParam(0, ch, val);   
+    }   
+  } 
 
 
 }

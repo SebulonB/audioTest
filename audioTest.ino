@@ -82,14 +82,19 @@ void loop() {
     }
   }
 
-  // //check lowpass
-  // for(int i=0; i<6;i++){
-  //   if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_HIGHPASS,i)
-  //       && ui->getDialActive(UserInterface::DIAL_PAGE_HIGHPASS,i))
-  //   {
-  //     apc->setHighPass(i);
-  //   }
-  // }  
+  //check filter 
+  s = (uint8_t)(UserInterface::DIAL_PAGE_FILTER_CH1);
+  e = (uint8_t)(UserInterface::DIAL_PAGE_FILTER_CH6);
+  for(int i=0; i<6;i++){
+    for(int y=s; y<=e;y++){
+      if(    ui->getDialUpdated((enum UserInterface::DIAL_PAGE)y,i)
+          && ui->getDialActive((enum UserInterface::DIAL_PAGE)y,i))
+      {
+        apc->setFilterParam((enum UserInterface::DIAL_PAGE)y,i);
+      }
+    }
+  }    
+
 
   //check send 
   s = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH1);

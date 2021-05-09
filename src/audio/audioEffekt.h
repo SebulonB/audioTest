@@ -6,6 +6,7 @@
 
 #include "audioDevice.h"
 #include "audioMixer.h"
+#include "audioFilter.h"
 
 
 //

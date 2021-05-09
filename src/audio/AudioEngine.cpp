@@ -96,7 +96,33 @@ audioEngine::audioEngine()
 
   m_devices.push_back( new audioEffektDelay( idgen, 
                                              aef_delay5_label_short, 
-                                             aef_delay5_label_long) );                                             
+                                             aef_delay5_label_long) );                
+
+
+  //create filter devices
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter1_label_short, 
+                                        aef_filter1_label_long) );
+
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter2_label_short, 
+                                        aef_filter2_label_long) );
+
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter3_label_short, 
+                                        aef_filter3_label_long) );
+
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter4_label_short, 
+                                        aef_filter4_label_long) );
+
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter5_label_short, 
+                                        aef_filter5_label_long) ); 
+
+  m_devices.push_back( new audioFilter( idgen, 
+                                        aef_filter6_label_short, 
+                                        aef_filter6_label_long) );
 
   //connect
   uint8_t mix_cnt = 0;

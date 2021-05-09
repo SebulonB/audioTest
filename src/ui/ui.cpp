@@ -404,7 +404,8 @@ void UserInterface::change_page(uint8_t p)
   if(p<6) //knob dial button
   {
     if(    m_page==PAGE_SEND
-        || m_page==PAGE_EFFECT)
+        || m_page==PAGE_EFFECT
+        || m_page==PAGE_FILTER)
     {
       m_page_sub = p;
     }
