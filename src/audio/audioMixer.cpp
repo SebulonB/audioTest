@@ -229,7 +229,8 @@ void audioMixer::updateVolume(uint32_t id, float val)
   //   Values for a and b in the equation a·exp(b·x)
   //
 
-  float amp = 0.001f * exp(6.908*vol);
+  //float amp = 0.001f * exp(6.908*vol); //60db
+  float amp = 0.0001f * exp(9.21*vol); //80db
   if(vol < 0.1f) {amp *= vol*10.f;} //silence for 0.
 
   if(pan<=0.){

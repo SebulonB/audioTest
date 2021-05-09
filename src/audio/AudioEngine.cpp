@@ -12,6 +12,9 @@ const char ae_mhelp_label1[]  PROGMEM = "mhelp:1";
 const char ae_mhelp_label2[]  PROGMEM = "mhelp:2";
 
 
+//Audio codec
+#define CS42448
+
 
 audioEngine::audioEngine()
 {
@@ -19,13 +22,34 @@ audioEngine::audioEngine()
   //ID Generator
   idgen = new audioDeviceIdGenerator();
 
-  //Audio Input
-  auto adc = new audioADC( idgen, AUDIO_ADC_I2S_HEX );
+  //Audio Codec (ADC/DAC)
+#ifdef CS42448
+  Serial.print("Codec: CS42448: ->tdm1 ->tdm1\n");
+
+  AudioControlCS42448 cs42448;   
+  //turn reset off
+  pinMode(17, OUTPUT);
+  digitalWrite(17, HIGH);
+  delay(100);//clock settle
+
+  cs42448.enable();
+  cs42448.volume(0.8);
+  cs42448.inputLevel(0.8);    
+
+  auto adc = new audioADC( idgen, AUDIO_ADC_TDM1 );  
   m_devices.push_back( adc );
 
-  //Audio Output
-  auto dac = new audioDAC( idgen, AUDIO_DAC_I2S ); 
+  auto dac = new audioDAC( idgen, AUDIO_DAC_TDM1 ); 
   m_devices.push_back( dac ); 
+#else
+  
+  Serial.print("Codec: none: ->I2SHex ->I2S\n")
+  auto adc = new audioADC( idgen, AUDIO_ADC_I2S_HEX ); 
+  m_devices.push_back( adc );
+
+  uto dac = new audioDAC( idgen, AUDIO_DAC_I2S ); 
+  m_devices.push_back( dac ); 
+#endif
 
   //Four Input Mixers
   m_devices.push_back( new audioMixer( idgen, 

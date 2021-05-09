@@ -37,7 +37,6 @@ class UserInterface
     enum DIAL_PAGE
     {
       DIAL_PAGE_PAN = 0,
-      DIAL_PAGE_HIGHPASS,
       
       //Send Pages
       DIAL_PAGE_SEND_CH1,
@@ -46,7 +45,15 @@ class UserInterface
       DIAL_PAGE_SEND_CH4,
       DIAL_PAGE_SEND_CH5,
       DIAL_PAGE_SEND_CH6,            
-      
+
+      //Filter Pages
+      DIAL_PAGE_FILTER_CH1,
+      DIAL_PAGE_FILTER_CH2,
+      DIAL_PAGE_FILTER_CH3,
+      DIAL_PAGE_FILTER_CH4,
+      DIAL_PAGE_FILTER_CH5,
+      DIAL_PAGE_FILTER_CH6,    
+
       //Effects
       DIAL_PAGE_EFFECT_DELAY,
       DIAL_PAGE_EFFECT_DELAY2,

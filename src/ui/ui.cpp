@@ -57,6 +57,16 @@ char *delay_params[KNOB_CNT] = {
   "wet"  
 };
 
+
+char *filter_params[KNOB_CNT] = {
+  "LP",
+  "HP",
+  "...",
+  "...",
+  "...",  
+  "gain"  
+};
+
 char *send_str_list[KNOB_CNT] = {
   
   "dlayA",
@@ -64,7 +74,6 @@ char *send_str_list[KNOB_CNT] = {
   "dlayC",
   "dlayD",
   "dlayE", 
-
   "rverb",
 };
 
@@ -145,9 +154,12 @@ UserInterface::UserInterface()
     if     (i == DIAL_PAGE_PAN){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, sting_list, 0.5);    
     }
-    else if(i >= DIAL_PAGE_SEND_CH1 && i<=DIAL_PAGE_SEND_CH6){
+    else if(i >= DIAL_PAGE_SEND_CH1 && i<= DIAL_PAGE_SEND_CH6){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, send_str_list, 0.0);      
     }    
+    else if(i >= DIAL_PAGE_FILTER_CH1 && i <= DIAL_PAGE_FILTER_CH6 ){
+      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, filter_params, 0.0);      
+    }        
     else if(i == DIAL_PAGE_EFFECT_REVERB){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, reverb_params, 0.0);      
     }
@@ -447,14 +459,19 @@ void UserInterface::change_page(uint8_t p)
     break;
 
     case PAGE_FILTER:
-      Serial.print("page filter HP\n"); 
-      dial = (uint8_t)DIAL_PAGE_HIGHPASS;   
+      Serial.print("page Filter | "); 
+      Serial.print(m_page_sub);
+      Serial.print("\n");      
+      if(m_page_sub>=6){m_page_sub = 0;}
+      dial = (uint8_t)DIAL_PAGE_FILTER_CH1 + m_page_sub;   
+      sprintf(str_, "filter CH:%d", m_page_sub+1 );
       p_dial_pages[dial]->setActive(true);
-      p_dial_pages[dial]->drawInfo(page_list[dial]);               
+       updateFromIParser();
+      p_dial_pages[dial]->drawInfo(str_);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 
       p_dial_pages[dial]->getDialVals(vals, KNOB_CNT);
-      p_knobs->write(vals, KNOB_CNT);         
+      p_knobs->write(vals, KNOB_CNT);       
     break;   
 
     case PAGE_SEND:
@@ -480,6 +497,7 @@ void UserInterface::change_page(uint8_t p)
       if(m_page_sub>6){m_page_sub = 0;} 
       dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;       
       p_dial_pages[dial]->setActive(true);
+       updateFromIParser();
       p_dial_pages[dial]->drawInfo(send_str_list[m_page_sub]);               
       p_dial_pages[dial]->drawAllChannels();
       p_dial_pages[dial]->drawUpdate(true); 

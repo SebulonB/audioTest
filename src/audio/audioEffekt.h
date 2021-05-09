@@ -16,11 +16,15 @@
 enum AUDIO_ADC
 {
   AUDIO_ADC_I2S_HEX = 0, 
+  AUDIO_ADC_TDM1,
+  AUDIO_ADC_NUM
 };
 
 enum AUDIO_DAC
 {
   AUDIO_DAC_I2S = 0, 
+  AUDIO_DAC_TDM1,
+  AUDIO_DAC_NUM
 };
 
 
@@ -39,7 +43,8 @@ class audioADC : public audioDevice
     AudioStream *getOutputStream(uint8_t aduio_ch);  
 
   private:
-    AudioInputI2SHex *m_input{NULL};
+    //AudioInputI2SHex *m_input{NULL};
+    AudioInputTDM *m_input{NULL};
     std::vector<AudioAmplifier *> m_amps;           
 
     enum AUDIO_ADC m_type;
@@ -62,7 +67,9 @@ class audioDAC : public audioDevice
     AudioStream *getOutputStream(uint8_t aduio_ch);  
 
   private:
-    AudioOutputI2S *m_output{NULL};
+    //AudioOutputI2S *m_output{NULL};
+    AudioOutputTDM *m_output{NULL};
+
 
     enum AUDIO_DAC m_type;
 

@@ -95,17 +95,17 @@ void AudioPatchControl::setHighPass(uint8_t ch)
   if(ch>=6){return;}
   if(p_ui == NULL){return;}
 
-  float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_HIGHPASS,ch);
-  float filter = 35 + val*1500.;
-  if(m_debug){
-    Serial.print("HighPass: ");
-    Serial.print(ch);
-    Serial.print(" | ");
-    Serial.print(val);
-    Serial.print(" | ");
-    Serial.print(filter);      
-    Serial.print("\n");
-  }
+  // float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_HIGHPASS,ch);
+  // float filter = 35 + val*1500.;
+  // if(m_debug){
+  //   Serial.print("HighPass: ");
+  //   Serial.print(ch);
+  //   Serial.print(" | ");
+  //   Serial.print(val);
+  //   Serial.print(" | ");
+  //   Serial.print(filter);      
+  //   Serial.print("\n");
+  // }
 
 
 }

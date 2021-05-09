@@ -82,14 +82,14 @@ void loop() {
     }
   }
 
-  //check lowpass
-  for(int i=0; i<6;i++){
-    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_HIGHPASS,i)
-        && ui->getDialActive(UserInterface::DIAL_PAGE_HIGHPASS,i))
-    {
-      apc->setHighPass(i);
-    }
-  }  
+  // //check lowpass
+  // for(int i=0; i<6;i++){
+  //   if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_HIGHPASS,i)
+  //       && ui->getDialActive(UserInterface::DIAL_PAGE_HIGHPASS,i))
+  //   {
+  //     apc->setHighPass(i);
+  //   }
+  // }  
 
   //check send 
   s = (uint8_t)(UserInterface::DIAL_PAGE_SEND_CH1);
