@@ -381,6 +381,25 @@ void UserInterface::updateFromIParser(void)
     
     dial++;
   }   
+
+  //
+  // Init Filter
+  std::vector<audioDevice *> filters;
+  p_engine->getDeviceList(ID_TYPE_DEVICE_FILTER, filters); 
+
+  dial = (uint8_t)DIAL_PAGE_FILTER_CH1;
+  for(auto filter : filters){
+    if(dial > (uint8_t)DIAL_PAGE_FILTER_CH6){break;}
+    sprintf(str1_, "ui->iParse(%d): %6s %3.3f %3.3f\n", dial-(uint8_t)DIAL_PAGE_FILTER_CH1,
+                        filter->getLabel(LABEL_SHORT),
+                        filter->getParamValue(0,0), filter->getParamValue(0,1));
+    Serial.print(str1_);
+
+    p_dial_pages[dial]->setDialVal(0, filter->getParamValue(0,0), false, false);
+    p_dial_pages[dial]->setDialVal(1, filter->getParamValue(0,1), false, false);
+    
+    dial++;
+  }     
 }
 
 void UserInterface::change_page(uint8_t p)
