@@ -129,17 +129,28 @@ audioEngine::audioEngine()
   std::vector<audioDevice *> delays;
   getDeviceList(ID_TYPE_DEVICE_DELAY_EFFEKT, delays);
 
+  std::vector<audioDevice *> filters;
+  getDeviceList(ID_TYPE_DEVICE_FILTER, filters);
+
   for(auto mix : m_devices){
     if(mix->isType(ID_TYPE_DEVICE_MIXER)){
 
       Serial.print("\n  --- |Create Mixer Channel: ");
       Serial.print(mix_cnt+1);
       Serial.print(" | ---\n");
-      
-      //connect adc to mixer
-      mix->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 0);
-      mix->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 1);
 
+      //input filter
+      if(mix_cnt < filters.size()){
+        //connect adc to filter
+        filters.at(mix_cnt)->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 0);
+        filters.at(mix_cnt)->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 1);
+        //connect filter to mixer
+        mix->setInputStream(filters.at(mix_cnt), static_cast<uint8_t>(mix_cnt), 0);
+        mix->setInputStream(filters.at(mix_cnt), static_cast<uint8_t>(mix_cnt), 1);
+      }else{
+        Serial.print("!!ADC->Filter connection Error!!\n");
+      }
+      
       //connect mixer to master
       dac->setInputStream(mix, static_cast<uint8_t>(0), 0 );
       dac->setInputStream(mix, static_cast<uint8_t>(1), 1 );    

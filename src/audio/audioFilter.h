@@ -35,6 +35,8 @@ class audioFilter : public audioDevice
 
     private:
       std::vector<audioMixerC *>      m_output_mix;
+      std::vector<AudioFilterStateVariable *> m_highpass;
+      std::vector<AudioFilterStateVariable *> m_lowpass;
 
 };
 
