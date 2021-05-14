@@ -263,6 +263,8 @@ void  audioDeviceParam::setValue(float val){
  
   if(val >= -1.0 && val <= 1.0)
   {
+
+    AudioNoInterrupts();
     //sclae
     float scaled=0;
     if      (m_val_exponent == 1){
@@ -277,7 +279,8 @@ void  audioDeviceParam::setValue(float val){
     else {
       scaled = m_val_min + (m_val_max - m_val_min)*val;
     }
-
+    AudioInterrupts();
+    
     //clip
     if      (scaled < m_val_min){scaled = m_val_min;}
     else if (scaled > m_val_max){scaled = m_val_max;}
@@ -287,6 +290,6 @@ void  audioDeviceParam::setValue(float val){
     if(update_callback != NULL){      
       update_callback(m_id, val);
     }
-  
+    
   }
 }

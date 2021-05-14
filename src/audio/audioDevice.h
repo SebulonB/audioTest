@@ -13,9 +13,9 @@
 #include "audioDeviceHelpers.h"
 #include "../patches/handler/handler.h"
 
-#define DEBUG_AUDIO_DEVICE
-#define DEBUG_AUDIO_DEVICE_CORDS
-#define DEBUG_AUDIO_DEVICE_CALLBACK
+// #define DEBUG_AUDIO_DEVICE
+// #define DEBUG_AUDIO_DEVICE_CORDS
+// #define DEBUG_AUDIO_DEVICE_CALLBACK
 
 #define SRC_CHANNEL(var) (static_cast<uint8_t>(var))
 #define DEST_CHANNEL(var) (static_cast<uint8_t>(var))
