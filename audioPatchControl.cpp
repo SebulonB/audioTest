@@ -166,7 +166,7 @@ void AudioPatchControl::setSendEffect(enum UserInterface::DIAL_PAGE page, uint8_
   std::vector<audioDevice *> mixers;
   p_engine->getDeviceList(ID_TYPE_DEVICE_MIXER, mixers);
   if(mixers.size() <= p){return;}
-  mixers.at(p)->updateParam(0, ch+3, val);
+  mixers.at(p)->updateParam(0, ch+4, val);
 
 }
 

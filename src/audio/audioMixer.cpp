@@ -117,12 +117,14 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
                                             ad_label_sendF, ad_label_sendF,
                                             cb_send ) );                                                                                                                                      
 
-  //
-  // in1 ---> out1 
-  //      |-> peak
-  // 
-  // in2 ---> out2
-  //
+    
+  for(int i=0; i<AUDIOMIXER_MAX_SENDS; i++)
+  {
+    audioMixerC *sendMono = new audioMixerC(m_max_channels);
+    for(int x=0; x<m_max_channels; x++){ sendMono->gain(x, 1.0);}
+    m_sendsMono.push_back(sendMono); 
+  }
+
   for(int i=0; i<m_max_channels; i++)
   {
     audioMixerC *in  = new audioMixerC(m_max_inputs);
@@ -136,6 +138,9 @@ audioMixer::audioMixer( audioDeviceIdGenerator *idgen,
       amp->gain(0.);
       m_sends.push_back(amp);
       m_cords.push_back(new AudioConnection( *in, 0, *amp, 0));
+      if(m_sendsMono.size() > (unsigned)i){
+        m_cords.push_back(new AudioConnection( *amp, 0, *m_sendsMono.at(x), i) );
+      }
     }
   }
   m_peak = new  AudioAnalyzePeak();
@@ -200,6 +205,12 @@ AudioStream *audioMixer::getOutputStream(enum STREAM_TYPE type, uint8_t audio_ch
     }
     return NULL;
   }
+  if(type == STREAM_TYPE_SEND_MONO){
+    if(track < m_sendsMono.size()){
+      return m_sendsMono.at(track);
+    }
+    return NULL;
+  }  
   else if(type == STREAM_TYPE_MAIN){
     return getOutputStream(audio_ch);
   }

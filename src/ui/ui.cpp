@@ -359,7 +359,7 @@ void UserInterface::updateFromIParser(void)
 
     //send params
     for(int x=0; x<6; x++){
-      p_dial_pages[send_dial+i]->setDialVal( x, mix->getParamValue(0,x+3), false, false );
+      p_dial_pages[send_dial+i]->setDialVal( x, mix->getParamValue(0,x+4), false, false );
     }
     i++;
   }

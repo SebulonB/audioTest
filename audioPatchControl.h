@@ -26,7 +26,7 @@ class AudioPatchControl
 
     std::list<AudioConnection*> _cords;
 
-    bool m_debug{false};   
+    bool m_debug{true};   
 
     //AudioEffekt *p_delay;
 

@@ -35,7 +35,7 @@ patchHandler      *ipatches=NULL;
 
 void setup(void) {
 
-  AudioMemory(1024);
+  AudioMemory(512);
 
   Serial.begin(9600);
 

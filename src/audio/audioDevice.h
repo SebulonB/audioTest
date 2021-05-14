@@ -36,7 +36,9 @@ enum ID_TYPE
 
 enum STREAM_TYPE {
     STREAM_TYPE_MAIN,
-    STREAM_TYPE_SEND
+    STREAM_TYPE_SEND,
+    STREAM_TYPE_SEND_MONO,
+    STREAM_TYPE_NUM
 };
 
 // return label type

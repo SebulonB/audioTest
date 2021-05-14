@@ -49,6 +49,7 @@ class audioMixer : public audioDevice
 
     //send effekts
     std::vector<AudioAmplifier *> m_sends; 
+    std::vector<audioMixerC *>    m_sendsMono;
 
   private:
     uint8_t m_max_inputs{4};

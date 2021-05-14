@@ -90,13 +90,13 @@ audioEngine::audioEngine()
                                              aef_delay3_label_short, 
                                              aef_delay3_label_long) );  
 
-  m_devices.push_back( new audioEffektDelay( idgen, 
-                                             aef_delay4_label_short, 
-                                             aef_delay4_label_long) );
+  // m_devices.push_back( new audioEffektDelay( idgen, 
+  //                                            aef_delay4_label_short, 
+  //                                            aef_delay4_label_long) );
 
-  m_devices.push_back( new audioEffektDelay( idgen, 
-                                             aef_delay5_label_short, 
-                                             aef_delay5_label_long) );                
+  // m_devices.push_back( new audioEffektDelay( idgen, 
+  //                                            aef_delay5_label_short, 
+  //                                            aef_delay5_label_long) );                
 
 
   //create filter devices
@@ -164,6 +164,19 @@ audioEngine::audioEngine()
           //right
           AudioStream * right = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
           delays.at(x)->setInputStream(mix, right, DEST_CHANNEL(1) );
+        }
+        else{
+          //connect dac outputs
+          AudioStream * mono  = mix->getOutputStream(STREAM_TYPE_SEND_MONO, 0, x);
+          if      ( x-delays.size() == 0){
+            dac->setInputStream(mix , mono, DEST_CHANNEL(0) );
+          }
+          else if ( x-delays.size() == 1){
+            dac->setInputStream(mix , mono, DEST_CHANNEL(1) );
+          }
+          else if ( x-delays.size() == 2){
+            dac->setInputStream(mix , mono, DEST_CHANNEL(4) );
+          }          
         }
       }
       mix_cnt++;
