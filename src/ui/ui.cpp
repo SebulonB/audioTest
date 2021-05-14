@@ -68,13 +68,13 @@ char *filter_params[KNOB_CNT] = {
 };
 
 char *send_str_list[KNOB_CNT] = {
-  
+
   "dlayA",
-  "dlayB",
-  "dlayC",
-  "dlayD",
-  "dlayE", 
-  "rverb",
+  "dlayB", 
+  "dlayC",  
+  "AuxA",
+  "AuxB",
+  "AuxC",
 };
 
 char *sting_list[KNOB_CNT] = {
@@ -160,9 +160,9 @@ UserInterface::UserInterface()
     else if(i >= DIAL_PAGE_FILTER_CH1 && i <= DIAL_PAGE_FILTER_CH6 ){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, filter_params, 0.0);      
     }        
-    else if(i == DIAL_PAGE_EFFECT_REVERB){
-      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, reverb_params, 0.0);      
-    }
+    // else if(i == DIAL_PAGE_EFFECT_REVERB){
+    //   p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, reverb_params, 0.0);      
+    // }
     else if(i == DIAL_PAGE_EFFECT_DELAY){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
     }
@@ -172,12 +172,12 @@ UserInterface::UserInterface()
     else if(i == DIAL_PAGE_EFFECT_DELAY3){
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
     } 
-    else if(i == DIAL_PAGE_EFFECT_DELAY4){
-      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
-    }    
-    else if(i == DIAL_PAGE_EFFECT_DELAY5){
-      p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
-    }                           
+    // else if(i == DIAL_PAGE_EFFECT_DELAY4){
+    //   p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    // }    
+    // else if(i == DIAL_PAGE_EFFECT_DELAY5){
+    //   p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, delay_params, 0.0);    
+    // }                           
     else{
       p_dial_pages[i] = new WidgetDialGroup(p_tft, KNOB_CNT, sting_list, 0.0); 
     }
@@ -372,7 +372,7 @@ void UserInterface::updateFromIParser(void)
 
   dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY;// + m_page_sub;
   for(auto delay : delays){
-    if(dial > (uint8_t)DIAL_PAGE_EFFECT_DELAY5){break;}
+    if(dial > (uint8_t)DIAL_PAGE_EFFECT_DELAY3){break;}
     sprintf(str1_, "ui->iParse(%d): %6s %3.3f %3.3f\n", dial-(uint8_t)DIAL_PAGE_EFFECT_DELAY,
                         delay->getLabel(LABEL_SHORT),
                         delay->getParamValue(0,0), delay->getParamValue(0,1));
@@ -521,7 +521,7 @@ void UserInterface::change_page(uint8_t p)
       Serial.print("page EFFECT | "); 
       Serial.print(m_page_sub);
       Serial.print("\n");
-      if(m_page_sub>6){m_page_sub = 0;} 
+      if(m_page_sub>=3){m_page_sub = 0;} 
       dial = (uint8_t)DIAL_PAGE_EFFECT_DELAY + m_page_sub;       
       p_dial_pages[dial]->setActive(true);
        updateFromIParser();

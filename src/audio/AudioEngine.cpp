@@ -173,8 +173,8 @@ audioEngine::audioEngine()
   //delays to master
   for( auto delay : delays){
     //master
-    dac->setInputStream(delay, SRC_CHANNEL(0), DEST_CHANNEL(0) );
-    dac->setInputStream(delay, SRC_CHANNEL(1), DEST_CHANNEL(1) );  
+    dac->setInputStream(delay, SRC_CHANNEL(0), DEST_CHANNEL(2) );
+    dac->setInputStream(delay, SRC_CHANNEL(1), DEST_CHANNEL(3) );  
   }
 
 #ifdef AUDIO_ENGINE_DEBUG

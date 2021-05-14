@@ -175,15 +175,15 @@ void AudioPatchControl::setReverbParam(uint8_t ch)
   if(ch>=6){return;}
   if(p_ui == NULL){return;}
 
-  float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_EFFECT_REVERB,ch);
+  // float val = p_ui->getDialVal(UserInterface::DIAL_PAGE_EFFECT_REVERB,ch);
 
-  if(m_debug){
-    Serial.print("ReverbParam: ");
-    Serial.print(ch);
-    Serial.print(" | ");
-    Serial.print(val);     
-    Serial.print("\n");
-  } 
+  // if(m_debug){
+  //   Serial.print("ReverbParam: ");
+  //   Serial.print(ch);
+  //   Serial.print(" | ");
+  //   Serial.print(val);     
+  //   Serial.print("\n");
+  // } 
       
 }
 

@@ -109,17 +109,17 @@ void loop() {
     }
   }    
 
-  //check Reverb Param
-  for(int i=0; i<6;i++){
-    if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_REVERB,i)
-        && ui->getDialActive(UserInterface::DIAL_PAGE_EFFECT_REVERB, i))
-    {
-      apc->setReverbParam(i);
-    }
-  } 
+  // //check Reverb Param
+  // for(int i=0; i<6;i++){
+  //   if(    ui->getDialUpdated(UserInterface::DIAL_PAGE_EFFECT_REVERB,i)
+  //       && ui->getDialActive(UserInterface::DIAL_PAGE_EFFECT_REVERB, i))
+  //   {
+  //     apc->setReverbParam(i);
+  //   }
+  // } 
 
   s = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY);
-  e = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY5);
+  e = (uint8_t)(UserInterface::DIAL_PAGE_EFFECT_DELAY3);
   //check Delay Param
   for(int i=0; i<6;i++){
     for(int y=s; y<=e;y++){
