@@ -5,6 +5,7 @@
 #include <Audio.h>
 
 #include "audioDevice.h"
+#include "audioEffekt.h"
 
 const char aef_filter1_label_short[] PROGMEM = "filter_1";
 const char aef_filter1_label_long[]  PROGMEM = "filter_1";
@@ -31,15 +32,22 @@ class audioFilter : public audioDevice
 
     protected:
       void updateHighPass(uint32_t id, float val);
+      void updateHighPassResonance(uint32_t id, float val);
+
       void updateLowPass(uint32_t id, float val);
+      void updateLowPassResonance(uint32_t id, float val);      
+      void updateLowPassType(uint32_t id, float val);      
+
+      void updateWidth(uint32_t id, float val);
 
     private:
-      std::vector<audioMixerC *>      m_output_mix;
+      std::vector<audioMixerC *>              m_output_mix;
       std::vector<AudioFilterStateVariable *> m_highpass;
       std::vector<AudioFilterBiquad *>        m_lowpass;
       std::vector<AudioAmplifier *>           m_gainIn;
       std::vector<AudioAmplifier *>           m_gainOut;
       std::vector<AudioEffectDelay *>         m_delay;
+      std::vector<audioMixerC *>              m_width_mix;
 };
 
 #endif /*AUDIO_FILTER_H_*/

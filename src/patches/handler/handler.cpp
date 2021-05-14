@@ -29,27 +29,45 @@ patchHandler::patchHandler(){
 #ifdef DEBUG_PATCH_HANDLER
   Serial.print("patchHandler Init\n");
 #endif
+  
+  m_file_read = SD.open(FILE_STR, FILE_READ);
+
+  if(!m_file_read){
+#ifdef DEBUG_PATCH_HANDLER      
+    Serial.print(F("could not open file\n"));
+#endif
+  }
+
+  DeserializationError err = deserializeJson(m_doc_read, m_file_read);
+  if (err) {
+#ifdef DEBUG_PATCH_HANDLER      
+    sprintf(str_, "deserializeJson() failed with code: %s\n", err.c_str());
+    Serial.print(str_);
+#endif    
+  }  
+
 }
 
 
 bool patchHandler::getParamValue(const char *l_device, const char *l_param, float &val){
 
-  File _file = SD.open(FILE_STR, FILE_READ);
-  if(!_file){
-    Serial.print("could not open file\n");
+  if(!m_file_read){
+#ifdef DEBUG_PATCH_HANDLER  
+    sprintf(str_, "file not opened: %s | %s \n", l_device, l_param);    
+    Serial.print(str_);
+#endif
     return false;
   }
 
-  DeserializationError err = deserializeJson(m_doc_read, _file);
-  if (err) {
-    Serial.print(F("deserializeJson() failed with code ")); 
-    Serial.println(err.c_str());
-    _file.close();
-    return false;
-  }
+//   if(!m_doc_read){
+// #ifdef DEBUG_PATCH_HANDLER  
+//     sprintf(str_, "no json reader open: %s | %s \n", l_device, l_param);    
+//     Serial.print(str_);
+// #endif    
+//     return false;
+//   }
 
   float v = m_doc_read[l_device][l_param];
-  _file.close();
   
   if(v == 0.0){
     val = 0.0;

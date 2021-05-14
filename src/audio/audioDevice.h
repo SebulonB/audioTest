@@ -49,13 +49,17 @@ enum LABEL_TYPE
 // Parameter unit type (PERCENT == %, PAN == 100L C 100R)
 enum PARAM_UNIT
 {
+  UNIT_UKN,
   UNIT_PERCENT,
   UNIT_PAN,
   UNIT_TIME,
   UNIT_BOOLEN,
   UNIT_DEZIBEL,
-  UNIT_FREQUENCY
+  UNIT_FREQUENCY,
+  UNIT_NUM,
 };
+
+
 
 class audioDeviceParam;
 class audioDeviceIdGenerator;

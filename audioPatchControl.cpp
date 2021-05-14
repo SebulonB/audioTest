@@ -112,13 +112,35 @@ void AudioPatchControl::setFilterParam(enum UserInterface::DIAL_PAGE page, uint8
   std::vector<audioDevice *> device;
   p_engine->getDeviceList(ID_TYPE_DEVICE_FILTER, device);  
 
-  if(ch>=0 && ch<=1)
-  {
-    if(p<device.size()){    
-      device.at(p)->updateParam(0, ch, val);   
-    }   
+  //LP Frequency
+  if      ( ch == 0 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
   } 
 
+  //LP Resonance
+  else if ( ch == 1 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
+  } 
+
+  //LP Type
+  else if ( ch == 2 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
+  } 
+
+  //HP Frequency
+  else if ( ch == 3 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
+  }   
+
+  //HP Resonance
+  else if ( ch == 4 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
+  }   
+
+  //Width
+  else if ( ch == 5 ){
+    if(p<device.size()){ device.at(p)->updateParam(0, ch, val);}   
+  }   
 
 }
 

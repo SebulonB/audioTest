@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 #include <SD.h>
 
-#define DEBUG_PATCH_HANDLER
+//#define DEBUG_PATCH_HANDLER
 
 class patchHandler {
 
@@ -18,9 +18,10 @@ class patchHandler {
     void saveWriteHandler(void);
 
   private:
-    StaticJsonDocument<2048> m_doc_write;
-    StaticJsonDocument<2048> m_doc_read;
+    StaticJsonDocument<4096> m_doc_write;
+    StaticJsonDocument<4096> m_doc_read;
     File m_file_write;
+    File m_file_read;
 
 #ifdef DEBUG_PATCH_HANDLER
     char str_[100];

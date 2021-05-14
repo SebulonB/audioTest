@@ -13,7 +13,7 @@
 #include "ui.h"
 
 
-//#define DEBUG_USAGE
+#define DEBUG_USAGE
 //#define DEBUG_KNOB
 
 
@@ -59,12 +59,12 @@ char *delay_params[KNOB_CNT] = {
 
 
 char *filter_params[KNOB_CNT] = {
-  "LP",
-  "HP",
-  "...",
-  "...",
-  "...",  
-  "gain"  
+  "LP f",
+  "res",
+  "typ",
+  "HP f",
+  "res",
+  "width"  
 };
 
 char *send_str_list[KNOB_CNT] = {
@@ -333,6 +333,10 @@ bool  UserInterface::getDialActive(enum DIAL_PAGE dial, uint8_t ch)
 
 void UserInterface::updateFromIParser(void)
 {
+
+  Serial.print("Update from IPParserUI\n");
+  //return ;//
+
   int i;
   uint8_t dial; 
   char str1_[100];
@@ -397,7 +401,10 @@ void UserInterface::updateFromIParser(void)
 
     p_dial_pages[dial]->setDialVal(0, filter->getParamValue(0,0), false, false);
     p_dial_pages[dial]->setDialVal(1, filter->getParamValue(0,1), false, false);
-    
+    p_dial_pages[dial]->setDialVal(2, filter->getParamValue(0,2), false, false);    
+    p_dial_pages[dial]->setDialVal(3, filter->getParamValue(0,3), false, false);       
+    p_dial_pages[dial]->setDialVal(4, filter->getParamValue(0,4), false, false);       
+    p_dial_pages[dial]->setDialVal(5, filter->getParamValue(0,5), false, false);       
     dial++;
   }     
 }
