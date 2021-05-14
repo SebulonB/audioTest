@@ -260,16 +260,33 @@ void audioDeviceParam::set_getScaledCallback(std::function <float (void)> funcp)
 }
 
 void  audioDeviceParam::setValue(float val){  
+ 
   if(val >= -1.0 && val <= 1.0)
   {
-    float scaled = m_val_min + (m_val_max - m_val_min)*val;
-    if( scaled >= m_val_min && scaled <= m_val_max )
-    {
-      m_value = val;          
-      m_value_scaled = scaled;       
-      if(update_callback != NULL){      
-        update_callback(m_id, val);
-      }
+    //sclae
+    float scaled=0;
+    if      (m_val_exponent == 1){
+      scaled = m_val_min + (m_val_max - m_val_min)*val;
     }
+    else if (m_val_exponent == 2){
+      scaled = m_val_min + (m_val_max - m_val_min)*val*val;
+    }
+    else if (m_val_exponent == 2){
+      scaled = m_val_min + (m_val_max - m_val_min)*val*val*val;
+    }
+    else {
+      scaled = m_val_min + (m_val_max - m_val_min)*val;
+    }
+
+    //clip
+    if      (scaled < m_val_min){scaled = m_val_min;}
+    else if (scaled > m_val_max){scaled = m_val_max;}
+
+    m_value = val;          
+    m_value_scaled = scaled;       
+    if(update_callback != NULL){      
+      update_callback(m_id, val);
+    }
+  
   }
 }

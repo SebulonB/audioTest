@@ -142,28 +142,28 @@ audioEngine::audioEngine()
       //input filter
       if(mix_cnt < filters.size()){
         //connect adc to filter
-        filters.at(mix_cnt)->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 0);
-        filters.at(mix_cnt)->setInputStream(adc, static_cast<uint8_t>(mix_cnt), 1);
+        filters.at(mix_cnt)->setInputStream( adc, SRC_CHANNEL(mix_cnt), DEST_CHANNEL(0) );
+        filters.at(mix_cnt)->setInputStream( adc, SRC_CHANNEL(mix_cnt), DEST_CHANNEL(1) );
         //connect filter to mixer
-        mix->setInputStream(filters.at(mix_cnt), static_cast<uint8_t>(mix_cnt), 0);
-        mix->setInputStream(filters.at(mix_cnt), static_cast<uint8_t>(mix_cnt), 1);
+        mix->setInputStream( filters.at(mix_cnt), SRC_CHANNEL(0), DEST_CHANNEL(0) );
+        mix->setInputStream( filters.at(mix_cnt), SRC_CHANNEL(1), DEST_CHANNEL(1) );
       }else{
         Serial.print("!!ADC->Filter connection Error!!\n");
       }
       
       //connect mixer to master
-      dac->setInputStream(mix, static_cast<uint8_t>(0), 0 );
-      dac->setInputStream(mix, static_cast<uint8_t>(1), 1 );    
+      dac->setInputStream(mix, SRC_CHANNEL(0), DEST_CHANNEL(2) );
+      dac->setInputStream(mix, SRC_CHANNEL(1), DEST_CHANNEL(3) );    
     
       //connect mixer send with delays
       for( unsigned x=0; x<AUDIOMIXER_MAX_SENDS; x++){
         if(x<delays.size()){
           //left
           AudioStream * left  = mix->getOutputStream(STREAM_TYPE_SEND, 0, x);
-          delays.at(x)->setInputStream(mix, left, 0);
+          delays.at(x)->setInputStream(mix, left,  DEST_CHANNEL(0) );
           //right
           AudioStream * right = mix->getOutputStream(STREAM_TYPE_SEND, 1, x);
-          delays.at(x)->setInputStream(mix, right, 1);
+          delays.at(x)->setInputStream(mix, right, DEST_CHANNEL(1) );
         }
       }
       mix_cnt++;
@@ -173,8 +173,8 @@ audioEngine::audioEngine()
   //delays to master
   for( auto delay : delays){
     //master
-    dac->setInputStream(delay, static_cast<uint8_t>(0), 0 );
-    dac->setInputStream(delay, static_cast<uint8_t>(1), 1 );  
+    dac->setInputStream(delay, SRC_CHANNEL(0), DEST_CHANNEL(0) );
+    dac->setInputStream(delay, SRC_CHANNEL(1), DEST_CHANNEL(1) );  
   }
 
 #ifdef AUDIO_ENGINE_DEBUG

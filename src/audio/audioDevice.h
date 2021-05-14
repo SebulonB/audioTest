@@ -17,6 +17,9 @@
 #define DEBUG_AUDIO_DEVICE_CORDS
 #define DEBUG_AUDIO_DEVICE_CALLBACK
 
+#define SRC_CHANNEL(var) (static_cast<uint8_t>(var))
+#define DEST_CHANNEL(var) (static_cast<uint8_t>(var))
+
 #define AUDIO_DEVICE_MAX_IDS    16384 //keep in mind for rabbitC (uint16_t)
 
 //
@@ -162,15 +165,15 @@ class audioDeviceParam
       update_callback = funcp;
     };
 
-    audioDeviceParam(  uint32_t id, float min, float max, float init, uint32_t index, enum PARAM_UNIT unit,
+    audioDeviceParam(  uint32_t id, float min, float max, float init, uint8_t exp, enum PARAM_UNIT unit,
                        const char * l_short, const char * l_long, std::function <void (uint32_t, float)> funcp )
     { 
       m_id      = id;
-      m_index   = index;
       m_val_max = max;
       m_val_min = min;
       m_value   = init;
       m_unit    = unit;
+      m_val_exponent = exp;
 
       m_label_short = l_short;
       m_label_long  = l_long;  
@@ -207,6 +210,7 @@ class audioDeviceParam
 
     float m_val_max{1.};
     float m_val_min{0.};
+    uint8_t m_val_exponent{1};
     float m_value{0.};
     float m_value_scaled{0.};
     enum PARAM_UNIT m_unit{UNIT_PERCENT};
